@@ -37,6 +37,14 @@ class MockCompassLibraryWrapperPluginPlatform
   Future<WritePasscodeResult> getWritePasscode(String reliantGUID,
           String programGuid, String rID, String passcode) =>
       Future.value(WritePasscodeResult(responseStatus: ResponseStatus.SUCCESS));
+
+  @override
+  Future<WriteProgramSpaceResult> getWriteProgramSpace(String reliantGUID, String programGUID, String rID, String programSpaceData, bool encryptData) =>
+      Future.value(WriteProgramSpaceResult(isSuccess: true));
+
+  @override
+  Future<ReadProgramSpaceResult> getReadProgramSpace(
+      String reliantGUID, String programGUID, String rID, bool decryptData) => Future.value(ReadProgramSpaceResult(programSpaceData: ""));
 }
 
 void main() {

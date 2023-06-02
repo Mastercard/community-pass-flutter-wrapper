@@ -51,4 +51,14 @@ void main() {
     expect(await platform.getWritePasscode('', '', '', ''),
         WritePasscodeResult(responseStatus: ResponseStatus.SUCCESS));
   });
+
+  test('getWriteProgramSpace', () async {
+    expect(await platform.getWriteProgramSpace('', '', '', '', false),
+        WriteProgramSpaceResult(isSuccess: true));
+  });
+
+  test('getReadProgramSpace', () async {
+    expect(await platform.getReadProgramSpace('', '', '', false),
+        ReadProgramSpaceResult(programSpaceData: ""));
+  });
 }

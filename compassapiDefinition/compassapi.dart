@@ -50,6 +50,26 @@ class WritePasscodeResult {
   WritePasscodeResult(this.responseStatus);
 }
 
+class WriteProgramSpaceResult {
+  final bool isSuccess;
+
+  WriteProgramSpaceResult(this.isSuccess);
+}
+
+class ReadProgramSpaceResult {
+  final String programSpaceData;
+
+  ReadProgramSpaceResult(this.programSpaceData);
+}
+
+class VerifyPasscodeResult {
+  final bool status;
+  final String rID;
+  final int retryCount;
+
+  VerifyPasscodeResult(this.status, this.rID, this.retryCount);
+}
+
 @HostApi()
 abstract class CommunityPassApi {
   @async
@@ -71,4 +91,20 @@ abstract class CommunityPassApi {
   @async
   WritePasscodeResult getWritePasscode(
       String reliantGUID, String programGUID, String rID, String passcode);
+
+  @async
+  WriteProgramSpaceResult getWriteProgramSpace(
+      String reliantGUID,
+      String programGUID,
+      String rID,
+      String programSpaceData,
+      bool encryptData);
+
+  @async
+  ReadProgramSpaceResult getReadProgramSpace(
+      String reliantGUID, String programGUID, String rID, bool decryptData);
+
+  @async
+  VerifyPasscodeResult getVerifyPasscode(
+      String reliantGUID, String programGUID, String passcode);
 }

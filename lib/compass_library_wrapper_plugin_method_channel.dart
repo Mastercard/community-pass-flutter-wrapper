@@ -39,8 +39,24 @@ class PigeonCompassLibraryWrapperPlugin
   }
 
   @override
-  Future<WritePasscodeResult> getWritePasscode(String reliantGUID,
-      String programGUID, String rID, String passcode) async {
-    return _api.getWritePasscode(reliantGUID, programGUID, rID, passcode);
+  Future<WriteProgramSpaceResult> getWriteProgramSpace(
+      String reliantGUID,
+      String programGUID,
+      String rID,
+      String programSpaceData,
+      bool encryptData) async {
+    return _api.getWriteProgramSpace(reliantGUID, programGUID, rID, programSpaceData, encryptData);
+  }
+
+  @override
+  Future<ReadProgramSpaceResult> getReadProgramSpace(String reliantGUID,
+      String programGUID, String rID, bool decryptData) async {
+    return _api.getReadProgramSpace(reliantGUID, programGUID, rID, decryptData);
+  }
+
+  @override
+  Future<VerifyPasscodeResult> getVerifyPasscode(String reliantGUID,
+      String programGUID, String passcode) async {
+    return _api.getVerifyPasscode(reliantGUID, programGUID, passcode);
   }
 }

@@ -32,4 +32,24 @@ class CompassLibraryWrapperPlugin {
     return CompassLibraryWrapperPluginPlatform.instance
         .getWritePasscode(reliantGUID, programGUID, rID, passcode);
   }
+
+  Future<WriteProgramSpaceResult> getWriteProgramSpace(
+      String reliantGUID,
+      String programGUID,
+      String rID,
+      String programSpaceData,
+      bool encryptData) {
+    return CompassLibraryWrapperPluginPlatform.instance
+        .getWriteProgramSpace(reliantGUID, programGUID, rID, programSpaceData, encryptData);
+  }
+
+  Future<ReadProgramSpaceResult> getReadProgramSpace(String reliantGUID,
+      String programGUID, String rID, bool decryptData) async {
+    return CompassLibraryWrapperPluginPlatform.instance.getReadProgramSpace(reliantGUID, programGUID, rID, decryptData);
+  }
+
+  Future<VerifyPasscodeResult> getVerifyPasscode(String reliantGUID,
+      String programGUID, String passcode) async {
+    return CompassLibraryWrapperPluginPlatform.instance.getVerifyPasscode(reliantGUID, programGUID, passcode);
+  }
 }

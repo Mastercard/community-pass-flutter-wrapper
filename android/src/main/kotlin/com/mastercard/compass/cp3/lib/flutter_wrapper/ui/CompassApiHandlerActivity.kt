@@ -14,6 +14,7 @@ import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.DATA
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.ERROR_CODE
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.ERROR_MESSAGE
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.RELIANT_APP_GUID
+import com.mastercard.compass.model.programspace.ReadProgramSpaceDataResponse
 
 abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.CompassKernelActivity() {
 
@@ -23,16 +24,17 @@ abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.Co
 
     protected val compassApiActivityResult = registerForActivityResult(CompassResultContract<T>()){
         when(it){
-            is CompassIntentResponse.Success -> successFinishActivity(it.data)
+            is CompassIntentResponse.Success<*> -> successFinishActivity(it.data)
             is CompassIntentResponse.Error -> errorFoundFinishActivity(it.code, it.message)
         }
     }
 
-    protected fun getNonIntentCompassApiResults(value: T) {
+    protected fun getNonIntentCompassApiResults(value: T?) {
         when(value){
             is ConsentResponse -> successFinishActivity(value)
+            is ReadProgramSpaceDataResponse -> successFinishActivity(value)
             is String -> successFinishActivity(value)
-            else -> errorFoundFinishActivity(0, "Something went wrong")
+            else -> errorFoundFinishActivity(0, "Unknown error")
         }
     }
 
@@ -44,6 +46,7 @@ abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.Co
         val intent = Intent().apply {
             when (data) {
                 is ConsentResponse -> putExtra(DATA, data)
+                is ReadProgramSpaceDataResponse -> putExtra(DATA, data)
                 is String -> putExtra(DATA, data)
                 is Parcelable -> putExtra(DATA, data)
             }
@@ -53,10 +56,9 @@ abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.Co
     }
 
     private fun errorFoundFinishActivity(errorCode: Int?, errorMessage: String?) {
-        Log.d(TAG, errorMessage.toString())
         val intent = Intent().apply {
             putExtra(ERROR_CODE, errorCode ?: UNKNOWN)
-            putExtra(ERROR_MESSAGE, errorMessage ?: getString(R.string.error_unknown))
+            putExtra(ERROR_MESSAGE, errorMessage ?: "unknown error")
         }
         setResult(RESULT_CANCELED, intent)
         finish()
@@ -66,22 +68,19 @@ abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.Co
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_Transparent)
 
-        reliantAppGuid = intent.getStringExtra(RELIANT_APP_GUID)!!
+        reliantGUID = intent.getStringExtra(RELIANT_APP_GUID)!!
         connectKernelService()
     }
 
     private fun connectKernelService() {
-        connectKernelService(reliantAppGuid) { isSuccess, errorCode, errorMessage ->
+        connectKernelService(reliantGUID) { isSuccess, errorCode, errorMessage ->
             when (isSuccess) {
                 true -> {
                     Log.d(TAG, "Connected to Kernel successfully")
                     startCompassCoroutine()
                 }
                 false -> {
-                    Log.e(
-                        TAG,
-                        "Could not connect to Kernel. Code: $errorCode. Message: $errorMessage"
-                    )
+                    Log.e(TAG, "Could not connect to Kernel. Code: $errorCode. Message: $errorMessage")
                     errorFoundFinishActivity(errorCode, errorMessage)
                 }
             }
