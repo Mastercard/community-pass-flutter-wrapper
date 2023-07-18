@@ -2,14 +2,13 @@ package com.mastercard.compass.cp3.lib.flutter_wrapper.route
 
 import android.app.Activity
 import android.content.Intent
-import com.mastercard.compass.cp3.java_flutter_wrapper.CompassApiFlutter
-import com.mastercard.compass.cp3.java_flutter_wrapper.CompassApiFlutter.WriteProfileResult
+import com.mastercard.compass.cp3.lib.flutter_wrapper.FlutterError
+import com.mastercard.compass.cp3.lib.flutter_wrapper.WriteProfileResult
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.WriteProfileCompassApiHandlerActivity
-import com.mastercard.compass.cp3.lib.flutter_wrapper.util.ErrorCode
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key
 
 class ConsumerDeviceAPIRoute( private val activity: Activity ) {
-    private lateinit var consumerDeviceResult: CompassApiFlutter.Result<WriteProfileResult>
+    private lateinit var resultCallback:  (Result<WriteProfileResult>) -> Unit
 
     companion object {
         val REQUEST_CODE_RANGE = 200 until 300
@@ -17,7 +16,7 @@ class ConsumerDeviceAPIRoute( private val activity: Activity ) {
         const val WRITE_PROFILE_REQUEST_CODE = 200
     }
 
-    fun startWriteProfileIntent(reliantGUID: String, programGUID: String, rId: String, overwriteCard: Boolean, result: CompassApiFlutter.Result<WriteProfileResult>?){
+    fun startWriteProfileIntent(reliantGUID: String, programGUID: String, rId: String, overwriteCard: Boolean, result: (Result<WriteProfileResult>) -> Unit){
         val intent = Intent(activity, WriteProfileCompassApiHandlerActivity::class.java).apply {
             putExtra(Key.RELIANT_APP_GUID, reliantGUID)
             putExtra(Key.PROGRAM_GUID, programGUID)
@@ -25,7 +24,7 @@ class ConsumerDeviceAPIRoute( private val activity: Activity ) {
             putExtra(Key.OVERWRITE_CARD, overwriteCard)
         }
 
-        consumerDeviceResult = result!!;
+        resultCallback = result
         activity.startActivityForResult(intent, WRITE_PROFILE_REQUEST_CODE)
     }
 
@@ -35,15 +34,14 @@ class ConsumerDeviceAPIRoute( private val activity: Activity ) {
     ) {
         when (resultCode) {
             Activity.RESULT_OK -> {
-                val result = WriteProfileResult.Builder()
-                    .setConsumerDeviceNumber(data?.extras?.get(Key.DATA).toString())
-                    .build()
-                consumerDeviceResult.success(result)
+                val response = data?.extras?.getString(Key.DATA).toString()
+                val result = WriteProfileResult.fromList(listOf(response))
+                resultCallback(Result.success(result))
             }
             Activity.RESULT_CANCELED -> {
-                val code = data?.getIntExtra(Key.ERROR_CODE, ErrorCode.UNKNOWN)
+                val code = data?.getIntExtra(Key.ERROR_CODE, 0)
                 val message = data?.getStringExtra(Key.ERROR_MESSAGE)!!
-                consumerDeviceResult.error(CompassThrowable(code, message))
+                resultCallback(Result.failure(FlutterError(code.toString(), message, null)))
             }
         }
     }

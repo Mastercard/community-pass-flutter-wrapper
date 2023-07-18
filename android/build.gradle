@@ -58,22 +58,24 @@ android {
 }
 
 // Uncomment this for release builds
-rootProject.allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        flatDir {
-            dirs project(':compass_library_wrapper_plugin').file('libs')
-        }
-    }
-}
+//rootProject.allprojects {
+//    repositories {
+//        google()
+//        mavenCentral()
+//        flatDir {
+//            dirs project(':compass_library_wrapper_plugin').file('libs')
+//        }
+//    }
+//}
 
 dependencies {
     // Use local aar inside flutter plugin
-    implementation (name:"community-pass-library-v2.4.0", ext:'aar') // for release - assembleRelease //Android Studio and cli
+//     implementation (name: "community-pass-library-v2.5.1", ext:'aar') // for release - assembleRelease //Android Studio and cli
 
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation files("libs/community-pass-library-v2.5.1.aar")
+
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     //Navigation libs

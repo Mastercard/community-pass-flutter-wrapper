@@ -68,7 +68,7 @@ class _RegisterBasicUserScreenState extends State<RegisterBasicUserScreen>
     } on PlatformException catch (ex) {
       if (!mounted) return;
       setState(() {
-        globalError = ex.code;
+        globalError = "${ex.code}: ${ex.message}";
         globalLoading = false;
       });
     }

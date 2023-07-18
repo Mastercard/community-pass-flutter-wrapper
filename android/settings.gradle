@@ -1,1 +1,2 @@
+include ':compass_library_wrapper_plugin'
 rootProject.name = 'compass_library_wrapper_plugin'

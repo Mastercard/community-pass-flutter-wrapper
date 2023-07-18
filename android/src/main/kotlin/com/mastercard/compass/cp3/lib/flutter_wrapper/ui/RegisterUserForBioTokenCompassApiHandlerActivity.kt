@@ -10,11 +10,13 @@ class RegisterUserForBioTokenCompassApiHandlerActivity: CompassApiHandlerActivit
         val reliantAppGuid: String = intent.getStringExtra(Key.RELIANT_APP_GUID)!!
         val programGUID: String = intent.getStringExtra(Key.PROGRAM_GUID)!!
         val consentId: String = intent.getStringExtra(Key.CONSENT_ID)!!
+        val modalities: ArrayList<String> = intent.getStringArrayListExtra(Key.MODALITIES)!!
+        val operationMode: String = intent.getStringExtra(Key.OPERATION_MODE)!!
 
         val listOfModalities = mutableListOf<Modality>().apply {
-            add(Modality.FACE)
-            add(Modality.LEFT_PALM)
-            add(Modality.RIGHT_PALM)
+            if(modalities.contains(Key.FACE)) add(Modality.FACE)
+            if(modalities.contains(Key.LEFT_PALM)) add(Modality.LEFT_PALM)
+            if(modalities.contains(Key.RIGHT_PALM)) add(Modality.RIGHT_PALM)
         }
 
         val jwt = helper.generateBioTokenJWT(
@@ -23,10 +25,9 @@ class RegisterUserForBioTokenCompassApiHandlerActivity: CompassApiHandlerActivit
         val intent = compassKernelServiceInstance.getRegisterUserForBioTokenActivityIntent(
             jwt,
             reliantAppGuid,
-            OperationMode.BEST_AVAILABLE
+            if(operationMode == Key.BEST_AVAILABLE) OperationMode.BEST_AVAILABLE else OperationMode.FULL
         )
 
         compassApiActivityResult.launch(intent)
     }
-
 }

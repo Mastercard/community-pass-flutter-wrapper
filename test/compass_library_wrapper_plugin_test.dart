@@ -16,7 +16,11 @@ class MockCompassLibraryWrapperPluginPlatform
 
   @override
   Future<RegisterUserWithBiometricsResult> getRegisterUserWithBiometrics(
-          String reliantGUID, String programGuid, String consentID) =>
+          String reliantGUID,
+          String programGuid,
+          String consentID,
+          List<String> modalities,
+          OperationMode operationMode) =>
       Future.value(RegisterUserWithBiometricsResult(
           bioToken: '',
           enrolmentStatus: EnrolmentStatus.EXISTING,
@@ -37,6 +41,80 @@ class MockCompassLibraryWrapperPluginPlatform
   Future<WritePasscodeResult> getWritePasscode(String reliantGUID,
           String programGuid, String rID, String passcode) =>
       Future.value(WritePasscodeResult(responseStatus: ResponseStatus.SUCCESS));
+
+  @override
+  Future<BlacklistFormFactorResult> getBlacklistFormFactor(
+          String reliantGUID,
+          String programGUID,
+          String rID,
+          String consumerDeviceNumber,
+          FormFactor type) =>
+      Future.value(BlacklistFormFactorResult(
+          type: '', status: FormFactorStatus.ACTIVE, consumerDeviceNumber: ''));
+
+  @override
+  Future<CreateSVAResult> getCreateSVA(
+          String reliantGUID, String programGUID, String? rID, SVA sva) =>
+      Future.value(CreateSVAResult(response: ''));
+
+  @override
+  Future<ReadProgramSpaceResult> getReadProgramSpace(String reliantGUID,
+          String programGUID, String rID, bool decryptData) =>
+      Future.value(ReadProgramSpaceResult(programSpaceData: ''));
+
+  @override
+  Future<ReadSVAResult> getReadSVA(
+          String reliantGUID, String programGUID, String rID, String svaUnit) =>
+      Future.value(ReadSVAResult(
+          currentBalance: 0,
+          transactionCount: 0,
+          purseType: '',
+          unit: '',
+          lastTransaction: Transaction(amount: 0, balance: 0)));
+
+  @override
+  Future<RegistrationDataResult> getRegistrationData(
+          String reliantGUID, String programGUID) =>
+      Future.value(RegistrationDataResult(
+          isRegisteredInProgram: false,
+          authMethods: [],
+          modalityType: [],
+          rID: ''));
+
+  @override
+  Future<UserVerificationResult> getUserVerification(String reliantGUID,
+          String programGUID, String token, List<String> modalities) =>
+      Future.value(UserVerificationResult(
+          isMatchFound: false, rID: '', biometricMatchList: []));
+
+  @override
+  Future<VerifyPasscodeResult> getVerifyPasscode(
+          String reliantGUID,
+          String programGUID,
+          String passcode,
+          FormFactor formFactor,
+          String? qrCpUserProfile) =>
+      Future.value(VerifyPasscodeResult(rID: '', status: false, retryCount: 0));
+
+  @override
+  Future<WriteProgramSpaceResult> getWriteProgramSpace(
+          String reliantGUID,
+          String programGUID,
+          String rID,
+          String programSpaceData,
+          bool encryptData) =>
+      Future.value(WriteProgramSpaceResult(
+        isSuccess: false,
+      ));
+
+  @override
+  Future<GenerateCpUserProfileResult> getGenerateCpUserProfile(
+          String reliantGUID,
+          String programGUID,
+          String rID,
+          String? passcode) =>
+      Future.value(GenerateCpUserProfileResult(
+          token: '', consumerDeviceNumber: '', message: ''));
 }
 
 void main() {
@@ -70,7 +148,7 @@ void main() {
 
     expect(
         await compassLibraryWrapperPluginInstance.getRegisterUserWithBiometrics(
-            '', '', ''),
+            '', '', '', List<String>.empty(), OperationMode.BEST_AVAILABLE),
         RegisterUserWithBiometricsResult(
             bioToken: '',
             programGUID: '',
@@ -114,5 +192,139 @@ void main() {
         await compassLibraryWrapperPluginInstance.getWritePasscode(
             '', '', '', ''),
         WritePasscodeResult(responseStatus: ResponseStatus.SUCCESS));
+  });
+
+  test('getVerifyPasscode', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance.getVerifyPasscode(
+            '', '', '', FormFactor.CARD, ''),
+        VerifyPasscodeResult(rID: '', status: false, retryCount: 0));
+  });
+
+  test('getUserVerification', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance
+            .getUserVerification('', '', '', ['']),
+        UserVerificationResult(
+            isMatchFound: false, rID: '', biometricMatchList: []));
+  });
+
+  test('getRegistrationData', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance.getRegistrationData('', ''),
+        RegistrationDataResult(
+            isRegisteredInProgram: false,
+            authMethods: [],
+            modalityType: [],
+            rID: ''));
+  });
+
+  test('getWriteProgramSpace', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance.getWriteProgramSpace(
+            '', '', '', '', false),
+        WriteProgramSpaceResult(isSuccess: false));
+  });
+
+  test('getReadProgramSpace', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance.getReadProgramSpace(
+            '', '', '', false),
+        ReadProgramSpaceResult(programSpaceData: ''));
+  });
+
+  test('getBlacklistFormFactor', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance.getBlacklistFormFactor(
+            '', '', '', '', FormFactor.CARD),
+        BlacklistFormFactorResult(
+            type: '',
+            status: FormFactorStatus.ACTIVE,
+            consumerDeviceNumber: ''));
+  });
+
+  test('getReadSVA', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance.getReadSVA('', '', '', ''),
+        ReadSVAResult(
+            currentBalance: 0,
+            transactionCount: 0,
+            purseType: '',
+            unit: '',
+            lastTransaction: Transaction(amount: 0, balance: 0)));
+  });
+  test('getCreateSVA', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance.getCreateSVA(
+            '',
+            '',
+            '',
+            SVA(
+                type: SVAType.EVoucherSVA,
+                unit: '',
+                eVoucherType: EVoucherType.COMMODITY)),
+        CreateSVAResult(response: ''));
+  });
+
+  test('getGenerateCpUserProfile', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance.getGenerateCpUserProfile(
+            '', '', '', ''),
+        GenerateCpUserProfileResult(
+            token: '', consumerDeviceNumber: '', message: ''));
   });
 }

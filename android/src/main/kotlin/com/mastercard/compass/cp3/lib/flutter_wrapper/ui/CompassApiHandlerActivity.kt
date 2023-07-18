@@ -9,7 +9,6 @@ import com.mastercard.compass.cp3.lib.flutter_wrapper.CompassKernelUIController
 import com.mastercard.compass.cp3.lib.flutter_wrapper.R
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.util.CompassIntentResponse
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.util.CompassResultContract
-import com.mastercard.compass.cp3.lib.flutter_wrapper.util.ErrorCode.UNKNOWN
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.DATA
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.ERROR_CODE
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.ERROR_MESSAGE
@@ -20,6 +19,7 @@ abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.Co
     companion object {
         protected const val TAG = "CompassApiIntentHandlerActivity"
     }
+
 
     protected val compassApiActivityResult = registerForActivityResult(CompassResultContract<T>()){
         when(it){
@@ -35,6 +35,8 @@ abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.Co
             else -> errorFoundFinishActivity(0, "Something went wrong")
         }
     }
+
+
 
     private lateinit var reliantAppGuid: String
 

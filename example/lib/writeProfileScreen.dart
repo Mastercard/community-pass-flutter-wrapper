@@ -86,7 +86,7 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
     } on PlatformException catch (ex) {
       setState(() {
         if (!mounted) return;
-        globalError = ex.code;
+        globalError = "${ex.code}: ${ex.message}";
         globalLoading = false;
       });
     }

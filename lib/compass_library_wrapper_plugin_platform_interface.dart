@@ -32,7 +32,11 @@ abstract class CompassLibraryWrapperPluginPlatform extends PlatformInterface {
   }
 
   Future<RegisterUserWithBiometricsResult> getRegisterUserWithBiometrics(
-      String reliantGUID, String programGUID, String consentID) async {
+      String reliantGUID,
+      String programGUID,
+      String consentID,
+      List<String> modalities,
+      OperationMode operationMode) async {
     throw UnimplementedError(
         'getRegisterUserWithBiometrics() has not been implemented.');
   }
@@ -51,5 +55,72 @@ abstract class CompassLibraryWrapperPluginPlatform extends PlatformInterface {
   Future<WritePasscodeResult> getWritePasscode(String reliantGUID,
       String programGUID, String rID, String passcode) async {
     throw UnimplementedError('getWritePasscode() has not been implemented.');
+  }
+
+  Future<VerifyPasscodeResult> getVerifyPasscode(
+      String reliantGUID,
+      String programGUID,
+      String passcode,
+      FormFactor formFactor,
+      String? qrCpUserProfile) async {
+    throw UnimplementedError('getVerifyPasscode() has not been implemented.');
+  }
+
+  Future<UserVerificationResult> getUserVerification(String reliantGUID,
+      String programGUID, String token, List<String> modalities) async {
+    throw UnimplementedError('getUserVerification() has not been implemented.');
+  }
+
+  Future<RegistrationDataResult> getRegistrationData(
+      String reliantGUID, String programGUID) async {
+    throw UnimplementedError('getRegistrationData() has not been implemented.');
+  }
+
+  Future<WriteProgramSpaceResult> getWriteProgramSpace(
+      String reliantGUID,
+      String programGUID,
+      String rID,
+      String programSpaceData,
+      bool encryptData) async {
+    throw UnimplementedError(
+        'getWriteProgramSpace() has not been implemented.');
+  }
+
+  Future<ReadProgramSpaceResult> getReadProgramSpace(
+    String reliantGUID,
+    String programGUID,
+    String rID,
+    bool decryptData,
+  ) async {
+    throw UnimplementedError('getReadProgramSpace() has not been implemented.');
+  }
+
+  Future<BlacklistFormFactorResult> getBlacklistFormFactor(
+      String reliantGUID,
+      String programGUID,
+      String rID,
+      String consumerDeviceNumber,
+      FormFactor type) async {
+    throw UnimplementedError(
+        'getBlacklistFormFactor() has not been implemented.');
+  }
+
+  Future<ReadSVAResult> getReadSVA(String reliantGUID, String programGUID,
+      String rID, String svaUnit) async {
+    throw UnimplementedError('getReadSVA() has not been implemented.');
+  }
+
+  Future<CreateSVAResult> getCreateSVA(
+      String reliantGUID, String programGUID, String? rID, SVA sva) async {
+    throw UnimplementedError('getCreateSVA() has not been implemented.');
+  }
+
+  Future<GenerateCpUserProfileResult> getGenerateCpUserProfile(
+      String reliantGUID,
+      String programGUID,
+      String rID,
+      String? passcode) async {
+    throw UnimplementedError(
+        'getGenerateCpUserProfile() has not been implemented.');
   }
 }

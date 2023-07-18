@@ -76,7 +76,7 @@ class _BiometricConsentScreenState extends State<BiometricConsentScreen>
     } on PlatformException catch (ex) {
       if (!mounted) return;
       setState(() {
-        globalError = ex.code;
+        globalError = "${ex.code}: ${ex.message}";
         globalLoading = false;
       });
     }
