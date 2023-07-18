@@ -29,7 +29,7 @@ class MockCompassLibraryWrapperPluginPlatform
 
   @override
   Future<RegisterBasicUserResult> getRegisterBasicUser(
-          String reliantGUID, String programGuid) =>
+          String reliantGUID, String programGuid, String formFactor) =>
       Future.value(RegisterBasicUserResult(rID: ''));
 
   @override
@@ -82,8 +82,12 @@ class MockCompassLibraryWrapperPluginPlatform
           rID: ''));
 
   @override
-  Future<UserVerificationResult> getUserVerification(String reliantGUID,
-          String programGUID, String token, List<String> modalities) =>
+  Future<UserVerificationResult> getUserVerification(
+          String reliantGUID,
+          String programGUID,
+          String formFactor,
+          String? qrBase64,
+          List<String> modalities) =>
       Future.value(UserVerificationResult(
           isMatchFound: false, rID: '', biometricMatchList: []));
 
@@ -164,7 +168,8 @@ void main() {
     CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
 
     expect(
-        await compassLibraryWrapperPluginInstance.getRegisterBasicUser('', ''),
+        await compassLibraryWrapperPluginInstance.getRegisterBasicUser(
+            '', '', ''),
         RegisterBasicUserResult(rID: ''));
   });
 
@@ -216,7 +221,7 @@ void main() {
 
     expect(
         await compassLibraryWrapperPluginInstance
-            .getUserVerification('', '', '', ['']),
+            .getUserVerification('', '', '', '', ['']),
         UserVerificationResult(
             isMatchFound: false, rID: '', biometricMatchList: []));
   });

@@ -39,7 +39,7 @@ void main() {
   });
 
   test('getRegisterBasicUser', () async {
-    expect(await platform.getRegisterBasicUser('', ''),
+    expect(await platform.getRegisterBasicUser('', '', ''),
         RegisterBasicUserResult(rID: ''));
   });
 
@@ -60,7 +60,7 @@ void main() {
 
   test('getUserVerification', () async {
     expect(
-        await platform.getUserVerification('', '', '', ['']),
+        await platform.getUserVerification('', '', '', '', ['']),
         UserVerificationResult(
             isMatchFound: false, rID: '', biometricMatchList: []));
   });

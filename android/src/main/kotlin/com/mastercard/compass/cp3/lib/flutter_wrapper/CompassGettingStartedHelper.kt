@@ -33,6 +33,7 @@ import com.mastercard.compass.kernel.client.service.KernelServiceConsumer
 import com.mastercard.compass.kernel.client.utils.KernelServiceConfigurations
 import com.mastercard.compass.kernel.client.utils.PermissionType
 import com.mastercard.compass.model.ClientPublicKey
+import com.mastercard.compass.model.biometric.BiometricMatchResult
 import com.mastercard.compass.model.biometrictoken.FormFactor
 import com.mastercard.compass.model.biometrictoken.Modality
 import com.mastercard.compass.model.instanceId.ReliantAppInstanceIdRequest
@@ -93,7 +94,7 @@ interface CompassKernelUIController {
     /**
      * Reliant App GUID to be set by the implementing class
      */
-    var reliantGUID: String
+    var reliantAppGUID: String
 
     /**
      * [AppInstanceID] to be set by the implementing class
@@ -182,10 +183,10 @@ interface CompassKernelUIController {
      * See [hasActiveKernelConnection] & [compassKernelServiceInstance]
      */
     fun connectKernelService(
-        reliantGUID: String,
+        reliantAppGUID: String,
         responseListener: (isSuccess: Boolean, errorCode: Int?, errorMessage: String?) -> Unit
     ) {
-        this.reliantGUID = reliantGUID
+        this.reliantAppGUID = reliantAppGUID
         this.responseListener = responseListener
         connectionViewModel.responseListener = responseListener
         when {
@@ -230,7 +231,7 @@ interface CompassKernelUIController {
         launchInstanceIdIntent(
             instance.getInstanceIdActivityIntent(
                 ReliantAppInstanceIdRequest(
-                    reliantGUID,
+                    reliantAppGUID,
                     ClientPublicKey(publicKey)
                 )
             )
@@ -323,7 +324,7 @@ interface CompassKernelUIController {
     }
 
     abstract class CompassKernelActivity : AppCompatActivity(), CompassKernelUIController {
-        override lateinit var reliantGUID: String
+        override lateinit var reliantAppGUID: String
         override lateinit var instance: AppInstanceID
         override lateinit var helper: CompassHelper
         override lateinit var responseListener: (isSuccess: Boolean, errorCode: Int?, errorMessage: String?) -> Unit
@@ -364,7 +365,7 @@ interface CompassKernelUIController {
     }
 
     abstract class CompassKernelFragment : Fragment(), CompassKernelUIController {
-        override lateinit var reliantGUID: String
+        override lateinit var reliantAppGUID: String
         override lateinit var instance: AppInstanceID
         override lateinit var helper: CompassHelper
         override lateinit var responseListener: (isSuccess: Boolean, errorCode: Int?, errorMessage: String?) -> Unit
@@ -500,8 +501,8 @@ interface CompassKernelUIController {
          * @return A string representation of the JWT
          */
         fun generateJWT(
-            reliantGUID: String,
-            programGUID: String,
+            reliantAppGUID: String,
+            programGuid: String,
             modalities: List<Modality> = listOf(
                 Modality.FACE,
                 Modality.LEFT_PALM,
@@ -509,15 +510,15 @@ interface CompassKernelUIController {
             ),
             formFactor: FormFactor = FormFactor.CARD,
             mwqr: ByteArray? = null
-        ): String = jwtHelper.generateJWT(reliantGUID, programGUID, modalities, formFactor, mwqr)
+        ): String = jwtHelper.generateJWT(reliantAppGUID, programGuid, modalities, formFactor, mwqr)
 
         /**
          * Generates a biotoken JWT signed using the Reliant App private key
          * @return A string representation of the JWT
          */
         fun generateBioTokenJWT(
-            reliantGUID: String,
-            programGUID: String,
+            reliantAppGUID: String,
+            programGuid: String,
             consentId: String,
             modalities: List<Modality> = listOf(
                 Modality.FACE,
@@ -525,7 +526,7 @@ interface CompassKernelUIController {
                 Modality.RIGHT_PALM
             )
         ): String =
-            jwtHelper.generateBioTokenJWT(reliantGUID, programGUID, consentId, modalities)
+            jwtHelper.generateBioTokenJWT(reliantAppGUID, programGuid, consentId, modalities)
 
         /**
          * Parses a biometric JWT signed using the Reliant App private key
@@ -712,8 +713,8 @@ interface CompassKernelUIController {
             private val kernelGuid: String
         ) {
             fun generateJWT(
-                reliantGUID: String,
-                programGUID: String,
+                reliantAppGUID: String,
+                programGuid: String,
                 modalities: List<Modality>,
                 formFactor: FormFactor,
                 mwqr: ByteArray?
@@ -725,10 +726,10 @@ interface CompassKernelUIController {
                     calendar.apply { set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 3) }.time
 
                 val builder = JwtRegisterUserRequest.Builder(
-                    reliantGUID,
+                    reliantAppGUID,
                     iat,
                     UUID.randomUUID().toString(),
-                    programGUID
+                    programGuid
                 ).exp(exp)
                     .signWith(privateKey)
                     .setModalities(modalities)
@@ -739,8 +740,8 @@ interface CompassKernelUIController {
             }
 
             fun generateBioTokenJWT(
-                reliantGUID: String,
-                programGUID: String,
+                reliantAppGUID: String,
+                programGuid: String,
                 consentId: String,
                 modalities: List<Modality>
             ): String {
@@ -751,15 +752,15 @@ interface CompassKernelUIController {
 
                 return JWTRequestModel(
                     payload = RegisterUserForBioTokenRequest(
-                        reliantAppGuid = reliantGUID,
-                        programId = programGUID,
+                        reliantAppGuid = reliantAppGUID,
+                        programId = programGuid,
                         biometricConsentId = consentId,
                         modality = modalities,
                         encrypt = true,
                         forcedModalityFlag = true,
                         regWhenDeviceOnline = true
                     ),
-                    iss = reliantGUID,
+                    iss = reliantAppGUID,
                     aud = kernelGuid,
                     iat = iat,
                     jti = UUID.randomUUID().toString(),
@@ -778,7 +779,13 @@ interface CompassKernelUIController {
                     }
                     val isMatch = claims!![JwtConstants.CLAIM_MATCH].toString().toYesNoBoolean()
                     val rId = claims.subject
-                    return CompassJWTResponse.Success(isMatch, rId)
+                    val biometricMatchList = builder.getMatchResultClaim(claims[JwtConstants.BIOMETRIC_MATCH_RESULT] as? String)
+
+                    claims.entries
+                    return CompassJWTResponse.Success(
+                        isMatch, rId,
+                        biometricMatchList
+                    )
                 } catch (e: Exception) {
                     val error = when (e) {
                         is UnsupportedJwtException -> "Unsupported Request"
@@ -801,7 +808,7 @@ interface CompassKernelUIController {
         }
 
         sealed class CompassJWTResponse {
-            data class Success(val isMatchFound: Boolean, val rId: String?) : CompassJWTResponse()
+            data class Success(val isMatchFound: Boolean, val rId: String?, val biometricMatchList: List<BiometricMatchResult>?) : CompassJWTResponse()
             data class Error(val message: String) : CompassJWTResponse()
         }
 

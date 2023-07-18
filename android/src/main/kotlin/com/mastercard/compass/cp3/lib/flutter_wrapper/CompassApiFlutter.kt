@@ -705,11 +705,11 @@ private object CommunityPassApiCodec : StandardMessageCodec() {
 interface CommunityPassApi {
   fun saveBiometricConsent(reliantGUID: String, programGUID: String, consumerConsentValue: Boolean, callback: (Result<SaveBiometricConsentResult>) -> Unit)
   fun getRegisterUserWithBiometrics(reliantGUID: String, programGUID: String, consentID: String, modalities: List<String>, operationMode: OperationMode, callback: (Result<RegisterUserWithBiometricsResult>) -> Unit)
-  fun getRegisterBasicUser(reliantGUID: String, programGUID: String, callback: (Result<RegisterBasicUserResult>) -> Unit)
+  fun getRegisterBasicUser(reliantGUID: String, programGUID: String, formFactor: String, callback: (Result<RegisterBasicUserResult>) -> Unit)
   fun getWriteProfile(reliantGUID: String, programGUID: String, rID: String, overwriteCard: Boolean, callback: (Result<WriteProfileResult>) -> Unit)
   fun getWritePasscode(reliantGUID: String, programGUID: String, rID: String, passcode: String, callback: (Result<WritePasscodeResult>) -> Unit)
   fun getVerifyPasscode(reliantGUID: String, programGUID: String, passcode: String, formFactor: FormFactor, qrCpUserProfile: String?, callback: (Result<VerifyPasscodeResult>) -> Unit)
-  fun getUserVerification(reliantGUID: String, programGUID: String, token: String, modalities: List<String>, callback: (Result<UserVerificationResult>) -> Unit)
+  fun getUserVerification(reliantGUID: String, programGUID: String, formFactor: String, qrBase64: String?, modalities: List<String>, callback: (Result<UserVerificationResult>) -> Unit)
   fun getRegistrationData(reliantGUID: String, programGUID: String, callback: (Result<RegistrationDataResult>) -> Unit)
   fun getWriteProgramSpace(reliantGUID: String, programGUID: String, rID: String, programSpaceData: String, encryptData: Boolean, callback: (Result<WriteProgramSpaceResult>) -> Unit)
   fun getReadProgramSpace(reliantGUID: String, programGUID: String, rID: String, decryptData: Boolean, callback: (Result<ReadProgramSpaceResult>) -> Unit)
@@ -779,7 +779,8 @@ interface CommunityPassApi {
             val args = message as List<Any?>
             val reliantGUIDArg = args[0] as String
             val programGUIDArg = args[1] as String
-            api.getRegisterBasicUser(reliantGUIDArg, programGUIDArg) { result: Result<RegisterBasicUserResult> ->
+            val formFactorArg = args[2] as String
+            api.getRegisterBasicUser(reliantGUIDArg, programGUIDArg, formFactorArg) { result: Result<RegisterBasicUserResult> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -870,9 +871,10 @@ interface CommunityPassApi {
             val args = message as List<Any?>
             val reliantGUIDArg = args[0] as String
             val programGUIDArg = args[1] as String
-            val tokenArg = args[2] as String
-            val modalitiesArg = args[3] as List<String>
-            api.getUserVerification(reliantGUIDArg, programGUIDArg, tokenArg, modalitiesArg) { result: Result<UserVerificationResult> ->
+            val formFactorArg = args[2] as String
+            val qrBase64Arg = args[3] as String?
+            val modalitiesArg = args[4] as List<String>
+            api.getUserVerification(reliantGUIDArg, programGUIDArg, formFactorArg, qrBase64Arg, modalitiesArg) { result: Result<UserVerificationResult> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

@@ -700,12 +700,12 @@ class CommunityPassApi {
     }
   }
 
-  Future<RegisterBasicUserResult> getRegisterBasicUser(String arg_reliantGUID, String arg_programGUID) async {
+  Future<RegisterBasicUserResult> getRegisterBasicUser(String arg_reliantGUID, String arg_programGUID, String arg_formFactor) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.CommunityPassApi.getRegisterBasicUser', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_reliantGUID, arg_programGUID]) as List<Object?>?;
+        await channel.send(<Object?>[arg_reliantGUID, arg_programGUID, arg_formFactor]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -808,12 +808,12 @@ class CommunityPassApi {
     }
   }
 
-  Future<UserVerificationResult> getUserVerification(String arg_reliantGUID, String arg_programGUID, String arg_token, List<String?> arg_modalities) async {
+  Future<UserVerificationResult> getUserVerification(String arg_reliantGUID, String arg_programGUID, String arg_formFactor, String? arg_qrBase64, List<String?> arg_modalities) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.CommunityPassApi.getUserVerification', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_reliantGUID, arg_programGUID, arg_token, arg_modalities]) as List<Object?>?;
+        await channel.send(<Object?>[arg_reliantGUID, arg_programGUID, arg_formFactor, arg_qrBase64, arg_modalities]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

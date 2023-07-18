@@ -42,7 +42,7 @@ abstract class CompassLibraryWrapperPluginPlatform extends PlatformInterface {
   }
 
   Future<RegisterBasicUserResult> getRegisterBasicUser(
-      String reliantGUID, String programGUID) async {
+      String reliantGUID, String programGUID, String formFactor) async {
     throw UnimplementedError(
         'getRegisterBasicUser() has not been implemented.');
   }
@@ -66,8 +66,12 @@ abstract class CompassLibraryWrapperPluginPlatform extends PlatformInterface {
     throw UnimplementedError('getVerifyPasscode() has not been implemented.');
   }
 
-  Future<UserVerificationResult> getUserVerification(String reliantGUID,
-      String programGUID, String token, List<String> modalities) async {
+  Future<UserVerificationResult> getUserVerification(
+      String reliantGUID,
+      String programGUID,
+      String formFactor,
+      String? qrBase64,
+      List<String> modalities) async {
     throw UnimplementedError('getUserVerification() has not been implemented.');
   }
 

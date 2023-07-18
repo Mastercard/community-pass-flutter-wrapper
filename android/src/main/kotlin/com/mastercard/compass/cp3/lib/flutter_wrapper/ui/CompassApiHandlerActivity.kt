@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
-import com.mastercard.compass.model.consent.ConsentResponse
 import com.mastercard.compass.cp3.lib.flutter_wrapper.CompassKernelUIController
 import com.mastercard.compass.cp3.lib.flutter_wrapper.R
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.util.CompassIntentResponse
@@ -13,6 +12,7 @@ import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.DATA
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.ERROR_CODE
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.ERROR_MESSAGE
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.RELIANT_APP_GUID
+import com.mastercard.compass.model.consent.ConsentResponse
 
 abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.CompassKernelActivity() {
 

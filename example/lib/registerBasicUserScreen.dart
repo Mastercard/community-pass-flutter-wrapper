@@ -54,7 +54,7 @@ class _RegisterBasicUserScreenState extends State<RegisterBasicUserScreen>
 
     try {
       result = await _communityPassFlutterplugin.getRegisterBasicUser(
-          reliantGUID, programGUID);
+          reliantGUID, programGUID, '');
 
       if (!mounted) return;
       setState(() {

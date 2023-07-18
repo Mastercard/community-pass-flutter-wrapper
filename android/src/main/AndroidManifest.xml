@@ -4,7 +4,6 @@
 
     <uses-permission android:name="com.mastercard.compass.permission.GET_INSTANCE_ID" />
     <uses-permission android:name="com.mastercard.compass.permission.BIND_SERVICE" />
-    <uses-permission android:name="com.mastercard.compass.permission.GET_INSTANCE_ID" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -15,6 +14,8 @@
         <activity android:name=".ui.WritePasscodeCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
         <activity android:name=".ui.RegisterBasicUserCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
         <activity android:name=".ui.BiometricConsentCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.GenerateCpUserProfileApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.GetRegistrationDataCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
     </application>
 
 </manifest>

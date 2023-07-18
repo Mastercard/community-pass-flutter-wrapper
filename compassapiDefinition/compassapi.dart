@@ -174,7 +174,7 @@ abstract class CommunityPassApi {
 
   @async
   RegisterBasicUserResult getRegisterBasicUser(
-      String reliantGUID, String programGUID);
+      String reliantGUID, String programGUID, String formFactor);
 
   @async
   WriteProfileResult getWriteProfile(
@@ -189,8 +189,12 @@ abstract class CommunityPassApi {
       String passcode, FormFactor formFactor, String? qrCpUserProfile);
 
   @async
-  UserVerificationResult getUserVerification(String reliantGUID,
-      String programGUID, String token, List<String> modalities);
+  UserVerificationResult getUserVerification(
+      String reliantGUID,
+      String programGUID,
+      String formFactor,
+      String? qrBase64,
+      List<String> modalities);
 
   @async
   RegistrationDataResult getRegistrationData(

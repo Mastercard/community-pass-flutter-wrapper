@@ -2,8 +2,8 @@ package com.mastercard.compass.cp3.lib.flutter_wrapper.ui
 
 import CompassApiHandlerActivity
 import com.mastercard.compass.base.OperationMode
-import com.mastercard.compass.model.biometrictoken.Modality
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key
+import com.mastercard.compass.model.biometrictoken.Modality
 
 class RegisterUserForBioTokenCompassApiHandlerActivity: CompassApiHandlerActivity<String>() {
     override suspend fun callCompassApi() {

@@ -32,8 +32,8 @@ class PigeonCompassLibraryWrapperPlugin
 
   @override
   Future<RegisterBasicUserResult> getRegisterBasicUser(
-      String reliantGUID, String programGUID) async {
-    return _api.getRegisterBasicUser(reliantGUID, programGUID);
+      String reliantGUID, String programGUID, String formFactor) async {
+    return _api.getRegisterBasicUser(reliantGUID, programGUID, formFactor);
   }
 
   @override
@@ -60,10 +60,14 @@ class PigeonCompassLibraryWrapperPlugin
   }
 
   @override
-  Future<UserVerificationResult> getUserVerification(String reliantGUID,
-      String programGUID, String token, List<String> modalities) async {
+  Future<UserVerificationResult> getUserVerification(
+      String reliantGUID,
+      String programGUID,
+      String formFactor,
+      String? qrBase64,
+      List<String> modalities) async {
     return _api.getUserVerification(
-        reliantGUID, programGUID, token, modalities);
+        reliantGUID, programGUID, formFactor, qrBase64, modalities);
   }
 
   @override

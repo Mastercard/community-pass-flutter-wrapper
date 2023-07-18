@@ -21,9 +21,9 @@ class CompassLibraryWrapperPlugin {
   }
 
   Future<RegisterBasicUserResult> getRegisterBasicUser(
-      String reliantGUID, String programGUID) {
+      String reliantGUID, String programGUID, String formFactor) {
     return CompassLibraryWrapperPluginPlatform.instance
-        .getRegisterBasicUser(reliantGUID, programGUID);
+        .getRegisterBasicUser(reliantGUID, programGUID, formFactor);
   }
 
   Future<WriteProfileResult> getWriteProfile(
@@ -48,10 +48,14 @@ class CompassLibraryWrapperPlugin {
         reliantGUID, programGUID, passcode, formFactor, qrCpUserProfile);
   }
 
-  Future<UserVerificationResult> getUserVerification(String reliantGUID,
-      String programGUID, String token, List<String> modalities) async {
-    return CompassLibraryWrapperPluginPlatform.instance
-        .getUserVerification(reliantGUID, programGUID, token, modalities);
+  Future<UserVerificationResult> getUserVerification(
+      String reliantGUID,
+      String programGUID,
+      String formFactor,
+      String? qrBase64,
+      List<String> modalities) async {
+    return CompassLibraryWrapperPluginPlatform.instance.getUserVerification(
+        reliantGUID, programGUID, formFactor, qrBase64, modalities);
   }
 
   Future<RegistrationDataResult> getRegistrationData(

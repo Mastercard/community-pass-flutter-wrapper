@@ -3,8 +3,12 @@ package com.mastercard.compass.cp3.lib.flutter_wrapper
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import com.mastercard.compass.cp3.lib.flutter_wrapper.route.*
-import com.mastercard.compass.kernel.client.service.KernelServiceConsumer
+import com.mastercard.compass.cp3.lib.flutter_wrapper.route.AuthenticationAPIRoute
+import com.mastercard.compass.cp3.lib.flutter_wrapper.route.ConsumerDeviceAPIRoute
+import com.mastercard.compass.cp3.lib.flutter_wrapper.route.ProgramSpaceAPIRoute
+import com.mastercard.compass.cp3.lib.flutter_wrapper.route.SVAOperationAPIRoute
+import com.mastercard.compass.cp3.lib.flutter_wrapper.route.UserRegistrationAPIRoute
+import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.util.DefaultCryptoService
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -15,23 +19,26 @@ import io.flutter.plugin.common.PluginRegistry
 class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener, CommunityPassApi {
   private lateinit var context: Context
   private lateinit var activity: Activity
-  private lateinit var kernelServiceConsumer: KernelServiceConsumer
+  private lateinit var defaultCryptoService: DefaultCryptoService
 
   private val consumerDeviceApiRoute: ConsumerDeviceAPIRoute by lazy {
     ConsumerDeviceAPIRoute(activity)
   }
-  private val registerUserWithBiometricsAPIRoute: RegisterUserWithBiometricsAPIRoute by lazy {
-    RegisterUserWithBiometricsAPIRoute(activity)
+  private val userRegistrationAPIRoute: UserRegistrationAPIRoute by lazy {
+    UserRegistrationAPIRoute(activity, helperObject)
   }
-  private val registerBasicUserAPIRoute: RegisterBasicUserAPIRoute by lazy {
-    RegisterBasicUserAPIRoute(activity)
+  private val authenticationAPIRoute: AuthenticationAPIRoute by lazy {
+    AuthenticationAPIRoute(activity, helperObject)
   }
-  private val consumerDevicePasscodeAPIRoute: ConsumerDevicePasscodeAPIRoute by lazy {
-    ConsumerDevicePasscodeAPIRoute(activity)
+
+  private val programSpaceAPIRoute: ProgramSpaceAPIRoute by lazy {
+    ProgramSpaceAPIRoute(activity, helperObject, defaultCryptoService)
   }
-  private val biometricConsentAPIRoute: BiometricConsentAPIRoute by lazy {
-    BiometricConsentAPIRoute(activity)
+
+  private val svaOperationAPIRoute: SVAOperationAPIRoute by lazy {
+    SVAOperationAPIRoute(activity)
   }
+
 
   private lateinit var helperObject: CompassKernelUIController.CompassHelper
 
@@ -39,6 +46,7 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     CommunityPassApi.setUp(binding.binaryMessenger, this)
     context = binding.applicationContext
     helperObject = CompassKernelUIController.CompassHelper(context);
+    defaultCryptoService = DefaultCryptoService(helperObject)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -69,11 +77,20 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
     when(requestCode){
-      in BiometricConsentAPIRoute.REQUEST_CODE_RANGE -> handleApiRouteResponse(requestCode, resultCode, data)
-      in ConsumerDeviceAPIRoute.REQUEST_CODE_RANGE -> handleApiRouteResponse(requestCode, resultCode, data)
-      in ConsumerDevicePasscodeAPIRoute.REQUEST_CODE_RANGE -> handleApiRouteResponse(requestCode, resultCode, data)
-      in RegisterUserWithBiometricsAPIRoute.REQUEST_CODE_RANGE -> handleApiRouteResponse(requestCode, resultCode, data)
-      in RegisterBasicUserAPIRoute.REQUEST_CODE_RANGE -> handleApiRouteResponse(requestCode, resultCode, data)
+      UserRegistrationAPIRoute.SAVE_BIOMETRIC_CONSENT_REQUEST_CODE -> userRegistrationAPIRoute.handleSaveBiometricConsentResponse(resultCode, data)
+      UserRegistrationAPIRoute.BIOMETRIC_USER_REGISTRATION_REQUEST_CODE -> userRegistrationAPIRoute.handleBiometricRegistrationResponse(resultCode, data)
+      UserRegistrationAPIRoute.BASIC_USER_REGISTRATION_REQUEST_CODE -> userRegistrationAPIRoute.handleRegisterBasicUserResponse(resultCode, data)
+      UserRegistrationAPIRoute.GENERATE_CP_USER_PROFILE_REQUEST_CODE -> userRegistrationAPIRoute.handleGenerateCpUserProfileResponse(resultCode, data)
+      ConsumerDeviceAPIRoute.WRITE_PROFILE_REQUEST_CODE -> consumerDeviceApiRoute.handleWriteProfileIntentResponse(resultCode, data)
+      ConsumerDeviceAPIRoute.WRITE_PASSCODE_REQUEST_CODE -> consumerDeviceApiRoute.handleWritePasscodeIntentResponse(resultCode, data)
+      ConsumerDeviceAPIRoute.BLACKLIST_FORM_FACTOR_REQUEST_CODE -> consumerDeviceApiRoute.handleBlacklistFormFactorIntentResponse(resultCode, data)
+      AuthenticationAPIRoute.REGISTRATION_DATA_REQUEST_CODE -> authenticationAPIRoute.handleGetRegistrationDataIntentResponse(resultCode, data)
+      AuthenticationAPIRoute.VERIFY_PASSCODE_REQUEST_CODE -> authenticationAPIRoute.handleVerifyPasscodeDataResponse(resultCode, data)
+      AuthenticationAPIRoute.USER_VERIFICATION_REQUEST_CODE -> authenticationAPIRoute.handleUserVerificationResponse(resultCode, data)
+      ProgramSpaceAPIRoute.READ_PROGRAM_SPACE_REQUEST_CODE -> programSpaceAPIRoute.handleReadProgramSPaceIntentResponse(resultCode, data)
+      ProgramSpaceAPIRoute.WRITE_PROGRAM_SPACE_REQUEST_CODE -> programSpaceAPIRoute.handleWriteProgramSpaceIntentResponse(resultCode, data)
+      SVAOperationAPIRoute.CREATE_SVA_REQUEST_CODE -> svaOperationAPIRoute.handleCreateSvaIntentResponse(resultCode, data)
+      SVAOperationAPIRoute.READ_SVA_REQUEST_CODE -> svaOperationAPIRoute.handleReadSvaIntentResponse(resultCode, data)
     }
     return true;
   }
@@ -84,7 +101,12 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     consumerConsentValue: Boolean,
     callback: (Result<SaveBiometricConsentResult>) -> Unit
   ) {
-    biometricConsentAPIRoute.startBiometricConsentIntent(reliantGUID, programGUID, consumerConsentValue, callback);
+    userRegistrationAPIRoute.startSaveBiometricConsentIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      consumerConsentValue = consumerConsentValue,
+      callback = callback
+    )
   }
 
   override fun getRegisterUserWithBiometrics(
@@ -95,15 +117,27 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     operationMode: OperationMode,
     callback: (Result<RegisterUserWithBiometricsResult>) -> Unit
   ) {
-    registerUserWithBiometricsAPIRoute.startRegisterUserWithBiometricsIntent(reliantGUID, programGUID, consentID, modalities, operationMode, callback)
+    userRegistrationAPIRoute.startBiometricRegistrationIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      consentID = consentID,
+      modalities = modalities,
+      operationMode = operationMode,
+      callback = callback
+    )
   }
 
   override fun getRegisterBasicUser(
     reliantGUID: String,
     programGUID: String,
+    formFactor: String,
     callback: (Result<RegisterBasicUserResult>) -> Unit
   ) {
-    registerBasicUserAPIRoute.startRegisterBasicUserIntent(reliantGUID, programGUID, callback)
+    userRegistrationAPIRoute.startRegisterBasicUserIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      formFactor = formFactor,
+      callback = callback)
   }
 
   override fun getWriteProfile(
@@ -113,7 +147,12 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     overwriteCard: Boolean,
     callback: (Result<WriteProfileResult>) -> Unit
   ) {
-    consumerDeviceApiRoute.startWriteProfileIntent(reliantGUID, programGUID, rID, overwriteCard, callback)
+    consumerDeviceApiRoute.startWriteProfileIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      rID = rID,
+      overwriteCard = overwriteCard,
+      callback = callback)
   }
 
   override fun getWritePasscode(
@@ -123,7 +162,12 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     passcode: String,
     callback: (Result<WritePasscodeResult>) -> Unit
   ) {
-    consumerDevicePasscodeAPIRoute.startWritePasscodeIntent(reliantGUID, programGUID, rID, passcode, callback)
+    consumerDeviceApiRoute.startWritePasscodeIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      rID = rID,
+      passcode = passcode,
+      callback = callback)
   }
 
   override fun getVerifyPasscode(
@@ -134,17 +178,32 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     qrCpUserProfile: String?,
     callback: (Result<VerifyPasscodeResult>) -> Unit
   ) {
-    TODO("Not yet implemented")
+    authenticationAPIRoute.startVerifyPasscodeIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      passcode = passcode,
+      formFactor = formFactor,
+      qrCpUserProfile = qrCpUserProfile,
+      callback = callback
+    )
   }
 
   override fun getUserVerification(
     reliantGUID: String,
     programGUID: String,
-    token: String,
+    formFactor: String,
+    qrBase64: String?,
     modalities: List<String>,
     callback: (Result<UserVerificationResult>) -> Unit
   ) {
-    TODO("Not yet implemented")
+    authenticationAPIRoute.startUserVerificationIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      modalities = modalities,
+      formFactor = formFactor,
+      qrBase64 = qrBase64,
+      callback = callback
+    )
   }
 
   override fun getRegistrationData(
@@ -152,7 +211,11 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     programGUID: String,
     callback: (Result<RegistrationDataResult>) -> Unit
   ) {
-    TODO("Not yet implemented")
+    authenticationAPIRoute.startGetRegistrationDataIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      callback = callback
+    )
   }
 
   override fun getWriteProgramSpace(
@@ -163,7 +226,14 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     encryptData: Boolean,
     callback: (Result<WriteProgramSpaceResult>) -> Unit
   ) {
-    TODO("Not yet implemented")
+    programSpaceAPIRoute.startWriteProgramSpaceIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      rID = rID,
+      encryptData = encryptData,
+      programSpaceData = programSpaceData,
+      callback = callback
+    )
   }
 
   override fun getReadProgramSpace(
@@ -173,7 +243,13 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     decryptData: Boolean,
     callback: (Result<ReadProgramSpaceResult>) -> Unit
   ) {
-    TODO("Not yet implemented")
+    programSpaceAPIRoute.startReadProgramSpaceIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      rID = rID,
+      decryptData = decryptData,
+      callback = callback
+    )
   }
 
   override fun getBlacklistFormFactor(
@@ -184,7 +260,14 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     type: FormFactor,
     callback: (Result<BlacklistFormFactorResult>) -> Unit
   ) {
-    TODO("Not yet implemented")
+    consumerDeviceApiRoute.startBlacklistFormFactorIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      rID = rID,
+      type = type,
+      consumerDeviceNumber = consumerDeviceNumber,
+      callback = callback
+    )
   }
 
   override fun getReadSVA(
@@ -194,7 +277,13 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     svaUnit: String,
     callback: (Result<ReadSVAResult>) -> Unit
   ) {
-    TODO("Not yet implemented")
+    svaOperationAPIRoute.startReadSvaIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      rID = rID,
+      svaUnit = svaUnit,
+      callback = callback
+    )
   }
 
   override fun getCreateSVA(
@@ -204,7 +293,13 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     sva: SVA,
     callback: (Result<CreateSVAResult>) -> Unit
   ) {
-    TODO("Not yet implemented")
+    svaOperationAPIRoute.startCreateSvaIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      rID = rID,
+      sva = sva,
+      callback = callback
+    )
   }
 
   override fun getGenerateCpUserProfile(
@@ -214,21 +309,12 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
     passcode: String?,
     callback: (Result<GenerateCpUserProfileResult>) -> Unit
   ) {
-    TODO("Not yet implemented")
-  }
-
-
-  private fun handleApiRouteResponse(
-    requestCode: Int,
-    resultCode: Int,
-    data: Intent?
-  ) {
-    when (requestCode) {
-      BiometricConsentAPIRoute.BIOMETRIC_CONSENT_REQUEST_CODE -> biometricConsentAPIRoute.handleBiometricConsentIntentResponse(resultCode, data)
-      ConsumerDeviceAPIRoute.WRITE_PROFILE_REQUEST_CODE -> consumerDeviceApiRoute.handleWriteProfileIntentResponse(resultCode, data)
-      ConsumerDevicePasscodeAPIRoute.WRITE_PASSCODE_REQUEST_CODE -> consumerDevicePasscodeAPIRoute.handleWritePasscodeIntentResponse(resultCode, data)
-      RegisterUserWithBiometricsAPIRoute.REGISTER_BIOMETRICS_REQUEST_CODE -> registerUserWithBiometricsAPIRoute.handleRegisterUserWithBiometricsIntentResponse(resultCode, data, helperObject)
-      RegisterBasicUserAPIRoute.REGISTER_BASIC_USER_REQUEST_CODE -> registerBasicUserAPIRoute.handleRegisterBasicUserIntentResponse(resultCode, data,)
-    }
+    userRegistrationAPIRoute.startGenerateCpUserProfileIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      rID = rID,
+      passcode = passcode,
+      callback = callback
+    )
   }
 }
