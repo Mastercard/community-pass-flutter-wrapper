@@ -1,17 +1,18 @@
-import 'package:compass_library_wrapper_plugin_example/sharedSpaceScreen.dart';
+import 'package:compass_library_wrapper_plugin_example/ReadProgramSpaceScreen.dart';
+import 'package:compass_library_wrapper_plugin_example/registrationDataScreen.dart';
+import 'package:compass_library_wrapper_plugin_example/writeProgramSpaceScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:compass_library_wrapper_plugin_example/biometricConsentScreen.dart';
 import 'package:compass_library_wrapper_plugin_example/color_utils.dart';
 import 'package:compass_library_wrapper_plugin_example/reusableCardWidget.dart';
 
-class PreTransactionScreen extends StatelessWidget {
-  const PreTransactionScreen({super.key});
+class SharedSpaceScreen extends StatelessWidget {
+  const SharedSpaceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pre-Transactions Phase'),
+        title: const Text('Shared Space Operations'),
         backgroundColor: mastercardOrange,
       ),
       body: Padding(
@@ -22,11 +23,16 @@ class PreTransactionScreen extends StatelessWidget {
             CardWidgetStateless(
               onClick: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const BiometricConsentScreen()));
+                  builder: (context) =>
+                      RegistrationDataScreen(navigationParams: const {
+                    "flag": 'READ_PROGRAM',
+                  }),
+                ));
               },
               cardLabel: 'Action',
-              title: 'Enrol a New User',
-              description: 'Enroll a user using either biometrics or passcode',
+              title: 'Read Program Space',
+              description:
+                  'Read existing data from the program space on in community pass card',
               cardIcon: const Icon(
                 Icons.person_add,
                 size: 30,
@@ -34,13 +40,17 @@ class PreTransactionScreen extends StatelessWidget {
             ),
             CardWidgetStateless(
               onClick: () {
-                // Utils.displayToast('Shared Space has not yet been implemented');
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const SharedSpaceScreen()));
+                  builder: (context) =>
+                      RegistrationDataScreen(navigationParams: const {
+                    "flag": 'WRITE_PROGRAM',
+                  }),
+                ));
               },
               cardLabel: 'Action',
-              title: 'Use the Shared Space',
-              description: 'Sync data between the POI and the Card',
+              title: 'Write Program Space',
+              description:
+                  'Store data to the program space in a community pass card',
               cardIcon: const Icon(
                 Icons.share,
                 size: 30,

@@ -1,4 +1,5 @@
 import 'package:compass_library_wrapper_plugin_example/registrationDataScreen.dart';
+import 'package:compass_library_wrapper_plugin_example/scanCommunityPassQR.dart';
 import 'package:flutter/material.dart';
 import 'package:compass_library_wrapper_plugin_example/color_utils.dart';
 import 'package:compass_library_wrapper_plugin_example/reusableCardWidget.dart';
@@ -22,7 +23,10 @@ class TransactionScreen extends StatelessWidget {
             CardWidgetStateless(
               onClick: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const RegistrationDataScreen()));
+                    builder: (context) =>
+                        RegistrationDataScreen(navigationParams: const {
+                          "flag": "AUTH",
+                        })));
               },
               cardLabel: 'Action',
               title: 'Authenticate a user with card',
@@ -35,7 +39,9 @@ class TransactionScreen extends StatelessWidget {
             ),
             CardWidgetStateless(
               onClick: () {
-                Utils.displayToast('This action has not yet been implemented');
+                // Utils.displayToast('This action has not yet been implemented');
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const ScanCommunityPassQRScreen()));
               },
               cardLabel: 'Action',
               title: 'Authenticate a user with QR',

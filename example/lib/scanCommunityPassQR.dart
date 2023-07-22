@@ -1,8 +1,5 @@
-import 'package:compass_library_wrapper_plugin_example/ReadProgramSpaceScreen.dart';
-import 'package:compass_library_wrapper_plugin_example/verifyBiometricUserScreen.dart';
-import 'package:compass_library_wrapper_plugin_example/verifyPasscodeScreen.dart';
-import 'package:compass_library_wrapper_plugin_example/writeProfileScreen.dart';
-import 'package:compass_library_wrapper_plugin_example/writeProgramSpaceScreen.dart';
+import 'package:simple_barcode_scanner/enum.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -10,25 +7,24 @@ import 'package:compass_library_wrapper_plugin_example/color_utils.dart';
 import 'package:compass_library_wrapper_plugin/compassapi.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class RegistrationDataScreen extends StatefulWidget {
-  Map<String, String> navigationParams;
-  RegistrationDataScreen({super.key, required this.navigationParams});
+class ScanCommunityPassQRScreen extends StatefulWidget {
+  const ScanCommunityPassQRScreen({
+    super.key,
+  });
 
   @override
-  State<RegistrationDataScreen> createState() =>
-      _RegistrationDataScreenState(navigationParams);
+  State<ScanCommunityPassQRScreen> createState() =>
+      _ScanCommunityPassQRScreenState();
 }
 
-class _RegistrationDataScreenState extends State<RegistrationDataScreen>
+class _ScanCommunityPassQRScreenState extends State<ScanCommunityPassQRScreen>
     with TickerProviderStateMixin {
-  Map<String, dynamic> receivedParams;
-  _RegistrationDataScreenState(this.receivedParams);
-
   final _communityPassFlutterplugin = CommunityPassApi();
   static final String _reliantAppGuid = dotenv.env['RELIANT_APP_GUID'] ?? '';
   static final String _programGuid = dotenv.env['PROGRAM_GUID'] ?? '';
 
   String globalError = '';
+  String qrBase64 = '';
   bool globalLoading = false;
 
   late AnimationController controller;
@@ -51,67 +47,29 @@ class _RegistrationDataScreenState extends State<RegistrationDataScreen>
     super.dispose();
   }
 
-  Future<void> getRegistrationData(
-      String reliantGUID, String programGUID) async {
-    if (mounted) {
-      setState(() {
-        globalLoading = true;
-      });
-    }
-    RegistrationDataResult result;
-
+  Future<void> launchQRCamera() async {
     try {
-      result = await _communityPassFlutterplugin.getRegistrationData(
-          reliantGUID, programGUID);
-
-      if (!mounted) return;
-      setState(() {
-        globalLoading = false;
-        switch (receivedParams["flag"]) {
-          case "AUTH":
-            {
-              if (result.isRegisteredInProgram == false) {
-                setState(() {
-                  globalError = "User not registered in the program.";
-                  globalLoading = false;
-                });
-              } else if (result.authType.contains("BIO")) {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        VerifyBiometricUserScreen(navigationParams: {
-                          "rID": result.rID,
-                          "authType": result.authType,
-                          "modalityType": result.modalityType
-                        })));
-              } else {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        VerifyPasscodeScreen(navigationParams: {
-                          "rID": result.rID,
-                          "authType": result.authType,
-                        })));
-              }
-            }
-            break;
-          case "READ_PROGRAM":
-            {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      ReadProgramSpaceScreen(navigationParams: {
-                        "rID": result.rID,
-                      })));
-            }
-            break;
-          case "WRITE_PROGRAM":
-            {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      WriteProgramSpaceScreen(navigationParams: {
-                        "rID": result.rID,
-                      })));
-            }
-            break;
-        }
+      setState(() async {
+        globalLoading = true;
+        var res = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SimpleBarcodeScannerPage(
+                key: Key("ScanrQR"),
+                lineColor: "#FF5F00",
+                cancelButtonText: "Cancel",
+                isShowFlashIcon: true,
+                appBarTitle: "Community Pass Service",
+                scanType: ScanType.qr,
+                centerTitle: true,
+              ),
+            ));
+        setState(() {
+          if (res is String) {
+            qrBase64 = res;
+          }
+          globalLoading = false;
+        });
       });
     } on PlatformException catch (ex) {
       if (!mounted) return;
@@ -126,7 +84,7 @@ class _RegistrationDataScreenState extends State<RegistrationDataScreen>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Get Registration Data'),
+          title: const Text('Scan QR Code'),
           backgroundColor: mastercardOrange,
         ),
         body: Column(
@@ -146,13 +104,13 @@ class _RegistrationDataScreenState extends State<RegistrationDataScreen>
               const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Text(
-                    'Part 1: Get Registration Data',
+                    'Part 1: Scan QR Code',
                     style: TextStyle(fontSize: 20),
                   )),
               const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Text(
-                    'This step calls the getRegistrationData API method and returns a rID, isRegisteredInProgram and authMethods.',
+                    'This step launches the QR scanner and derives the token stored on the QR code.',
                     style: TextStyle(fontSize: 16),
                   )),
               Padding(
@@ -178,10 +136,9 @@ class _RegistrationDataScreenState extends State<RegistrationDataScreen>
                           onPressed: globalLoading
                               ? null
                               : (() {
-                                  getRegistrationData(
-                                      _reliantAppGuid, _programGuid);
+                                  launchQRCamera();
                                 }),
-                          child: const Text('Get Registration Data')))),
+                          child: const Text('open Camera')))),
             ]));
   }
 }

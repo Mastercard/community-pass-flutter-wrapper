@@ -122,7 +122,7 @@ class _VerifyPasscodeScreenState extends State<VerifyPasscodeScreen>
               const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Text(
-                    'This step calls the getVerifyPasscode API method and returns a rID, isRegisteredInProgram and authMethods.',
+                    'This step calls the getVerifyPasscode API method and returns a rID, status and retryCount.',
                     style: TextStyle(fontSize: 16),
                   )),
               Padding(

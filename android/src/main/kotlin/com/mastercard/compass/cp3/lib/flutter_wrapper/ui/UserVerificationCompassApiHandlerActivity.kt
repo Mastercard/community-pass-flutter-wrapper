@@ -16,7 +16,6 @@ class UserVerificationCompassApiHandlerActivity: CompassApiHandlerActivity<Strin
         val modalities: ArrayList<String> = intent.getStringArrayListExtra(Key.MODALITIES)!!
 
         val requestJwt = if (formFactor == Key.QR) {
-            Log.d("TAG_TAG_TAG", "QR")
             helper.generateJWT(
                 reliantGUID,
                 programGUID,
@@ -25,8 +24,6 @@ class UserVerificationCompassApiHandlerActivity: CompassApiHandlerActivity<Strin
                 Base64.getDecoder().decode(qrBase64)
             )
         } else {
-            Log.d("TAG_TAG_TAG", "CARD")
-            Log.d("TAG_TAG_TAG", modalities.toString())
             helper.generateJWT(
                 reliantGUID,
                 programGUID,
@@ -39,8 +36,6 @@ class UserVerificationCompassApiHandlerActivity: CompassApiHandlerActivity<Strin
             requestJwt,
             reliantGUID
         )
-
-        Log.d("TAG_TAG_TAG", intent.toString())
 
         compassApiActivityResult.launch(intent)
     }

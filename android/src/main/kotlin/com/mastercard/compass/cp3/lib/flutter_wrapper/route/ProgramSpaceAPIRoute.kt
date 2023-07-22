@@ -8,6 +8,7 @@ import com.mastercard.compass.cp3.lib.flutter_wrapper.FlutterError
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ReadProgramSpaceResult
 import com.mastercard.compass.cp3.lib.flutter_wrapper.WriteProgramSpaceResult
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.BiometricConsentCompassApiHandlerActivity
+import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.ReadProgramSpaceCompassApiHandlerActivity
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.WriteProgramSpaceCompassApiHandlerActivity
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.util.DefaultCryptoService
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.util.DefaultCryptoService.Companion.TAG
@@ -46,7 +47,7 @@ class ProgramSpaceAPIRoute(
         decryptProgramData = decryptData
         readProgramResultCallback = callback
 
-        val intent = Intent(activity, BiometricConsentCompassApiHandlerActivity::class.java).apply {
+        val intent = Intent(activity, ReadProgramSpaceCompassApiHandlerActivity::class.java).apply {
             putExtra(Key.PROGRAM_GUID, programGUID)
             putExtra(Key.RELIANT_APP_GUID, reliantGUID)
             putExtra(Key.RID, rID)
@@ -76,7 +77,7 @@ class ProgramSpaceAPIRoute(
     }
 
 
-    private fun parseJWT(jwt: String): String? {
+    private fun parseJWT(jwt: String): String {
         try {
             val data =
                 Jwts.parserBuilder().setSigningKey(kernelPublicKey).build().parseClaimsJws(jwt).body
@@ -99,10 +100,10 @@ class ProgramSpaceAPIRoute(
         when (resultCode) {
             Activity.RESULT_OK -> {
                 val response = data?.extras?.get(Key.DATA) as ReadProgramSpaceDataResponse
-                val extractedData: String = parseJWT(response.jwt).toString()
+                var extractedData: String = parseJWT(response.jwt)
 
                 if(decryptProgramData){
-                    String(cryptoService!!.decrypt(extractedData))
+                    extractedData = String(cryptoService!!.decrypt(extractedData))
                 }
 
                 val result = ReadProgramSpaceResult.fromList(listOf(extractedData))
@@ -124,7 +125,7 @@ class ProgramSpaceAPIRoute(
             Activity.RESULT_OK -> {
                 val response: WriteProgramSpaceDataResponse = data?.extras?.get(Key.DATA) as WriteProgramSpaceDataResponse
 
-                val result = WriteProgramSpaceResult.fromList(listOf(response))
+                val result = WriteProgramSpaceResult.fromList(listOf(response.isSuccess))
                 writeProgramResultCallback(Result.success(result))
             }
 

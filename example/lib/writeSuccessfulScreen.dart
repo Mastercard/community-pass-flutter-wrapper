@@ -4,7 +4,6 @@ import 'package:compass_library_wrapper_plugin_example/main.dart';
 
 class WriteSuccessfulScreen extends StatefulWidget {
   Map<String, String> navigationParams;
-  // WriteSuccessfulScreen({super.key, required this.value});
   WriteSuccessfulScreen({super.key, required this.navigationParams});
 
   @override
