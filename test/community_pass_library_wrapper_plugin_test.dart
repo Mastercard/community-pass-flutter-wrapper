@@ -55,12 +55,12 @@ void main() {
 
   test('getVerifyPasscode', () async {
     expect(await platform.getVerifyPasscode('', '', '', FormFactor.CARD, ''),
-        VerifyPasscodeResult(rID: '', status: false, retryCount: 0));
+        VerifyPasscodeResult(rID: '', status: false, retryCount: null));
   });
 
   test('getUserVerification', () async {
     expect(
-        await platform.getUserVerification('', '', '', '', ['']),
+        await platform.getUserVerification('', '', FormFactor.CARD, '', ['']),
         UserVerificationResult(
             isMatchFound: false, rID: '', biometricMatchList: []));
   });
@@ -70,7 +70,7 @@ void main() {
         await platform.getRegistrationData('', ''),
         RegistrationDataResult(
             isRegisteredInProgram: false,
-            authMethods: [],
+            authType: [],
             modalityType: [],
             rID: ''));
   });

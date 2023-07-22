@@ -68,17 +68,17 @@ class WritePasscodeResult {
 }
 
 class VerifyPasscodeResult {
-  final String rID;
+  final String? rID;
   final bool status;
-  final int retryCount;
+  final int? retryCount;
 
   VerifyPasscodeResult(this.rID, this.status, this.retryCount);
 }
 
 class Match {
-  final int distance;
   final String modality;
-  final int normalizedScore;
+  final String distance;
+  final String normalizedScore;
 
   Match(this.distance, this.modality, this.normalizedScore);
 }
@@ -93,12 +93,12 @@ class UserVerificationResult {
 
 class RegistrationDataResult {
   final bool isRegisteredInProgram;
-  final List<String?> authMethods;
+  final List<String?> authType;
   final List<String?> modalityType;
   final String rID;
 
-  RegistrationDataResult(this.isRegisteredInProgram, this.authMethods,
-      this.modalityType, this.rID);
+  RegistrationDataResult(
+      this.isRegisteredInProgram, this.authType, this.modalityType, this.rID);
 }
 
 class ReadProgramSpaceResult {
@@ -192,7 +192,7 @@ abstract class CommunityPassApi {
   UserVerificationResult getUserVerification(
       String reliantGUID,
       String programGUID,
-      String formFactor,
+      FormFactor formFactor,
       String? qrBase64,
       List<String> modalities);
 

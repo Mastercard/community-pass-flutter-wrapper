@@ -63,7 +63,7 @@ class PigeonCompassLibraryWrapperPlugin
   Future<UserVerificationResult> getUserVerification(
       String reliantGUID,
       String programGUID,
-      String formFactor,
+      FormFactor formFactor,
       String? qrBase64,
       List<String> modalities) async {
     return _api.getUserVerification(

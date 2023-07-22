@@ -10,9 +10,9 @@ fun populateModalityList (modalities: List<String>) : MutableList<Modality> {
     val listOfModalities = mutableListOf<Modality>()
 
     modalities.forEach {
-        if (it == Key.FACE_MODALITY) listOfModalities.add(Modality.FACE)
-        if (it == Key.LEFT_PALM_MODALITY) listOfModalities.add(Modality.LEFT_PALM)
-        if (it == Key.RIGHT_PALM_MODALITY) listOfModalities.add(Modality.RIGHT_PALM)
+        if (it == Key.FACE) listOfModalities.add(Modality.FACE)
+        if (it == Key.LEFT_PALM) listOfModalities.add(Modality.LEFT_PALM)
+        if (it == Key.RIGHT_PALM) listOfModalities.add(Modality.RIGHT_PALM)
     }
     return listOfModalities
 }

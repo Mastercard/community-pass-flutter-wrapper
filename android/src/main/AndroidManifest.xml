@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mastercard.compass.cp3.lib.flutter_wrapper">
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.mastercard.compass.cp3.lib.flutter_wrapper">
     <uses-permission android:name="com.mastercard.compass.permission.GET_INSTANCE_ID" />
     <uses-permission android:name="com.mastercard.compass.permission.BIND_SERVICE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-
-    <uses-feature android:name="android.hardware.camera" />
-
     <application>
         <activity android:name=".ui.RegisterUserForBioTokenCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
         <activity android:name=".ui.WriteProfileCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
@@ -15,7 +9,13 @@
         <activity android:name=".ui.RegisterBasicUserCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
         <activity android:name=".ui.BiometricConsentCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
         <activity android:name=".ui.GenerateCpUserProfileApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.WriteProgramSpaceCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.ReadProgramSpaceCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.ReadSVACompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.CreateSVACompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.UserVerificationCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.VerifyPasscodeCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
         <activity android:name=".ui.GetRegistrationDataCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.BlacklistFormFactorApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
     </application>
-
 </manifest>

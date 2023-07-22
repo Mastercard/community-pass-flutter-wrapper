@@ -191,7 +191,7 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
   override fun getUserVerification(
     reliantGUID: String,
     programGUID: String,
-    formFactor: String,
+    formFactor: FormFactor,
     qrBase64: String?,
     modalities: List<String>,
     callback: (Result<UserVerificationResult>) -> Unit

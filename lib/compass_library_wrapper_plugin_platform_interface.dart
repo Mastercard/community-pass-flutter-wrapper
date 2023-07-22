@@ -69,7 +69,7 @@ abstract class CompassLibraryWrapperPluginPlatform extends PlatformInterface {
   Future<UserVerificationResult> getUserVerification(
       String reliantGUID,
       String programGUID,
-      String formFactor,
+      FormFactor formFactor,
       String? qrBase64,
       List<String> modalities) async {
     throw UnimplementedError('getUserVerification() has not been implemented.');

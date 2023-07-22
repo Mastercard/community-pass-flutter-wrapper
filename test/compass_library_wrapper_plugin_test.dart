@@ -77,7 +77,7 @@ class MockCompassLibraryWrapperPluginPlatform
           String reliantGUID, String programGUID) =>
       Future.value(RegistrationDataResult(
           isRegisteredInProgram: false,
-          authMethods: [],
+          authType: [],
           modalityType: [],
           rID: ''));
 
@@ -85,7 +85,7 @@ class MockCompassLibraryWrapperPluginPlatform
   Future<UserVerificationResult> getUserVerification(
           String reliantGUID,
           String programGUID,
-          String formFactor,
+          FormFactor formFactor,
           String? qrBase64,
           List<String> modalities) =>
       Future.value(UserVerificationResult(
@@ -98,7 +98,8 @@ class MockCompassLibraryWrapperPluginPlatform
           String passcode,
           FormFactor formFactor,
           String? qrCpUserProfile) =>
-      Future.value(VerifyPasscodeResult(rID: '', status: false, retryCount: 0));
+      Future.value(
+          VerifyPasscodeResult(rID: '', status: false, retryCount: null));
 
   @override
   Future<WriteProgramSpaceResult> getWriteProgramSpace(
@@ -209,7 +210,7 @@ void main() {
     expect(
         await compassLibraryWrapperPluginInstance.getVerifyPasscode(
             '', '', '', FormFactor.CARD, ''),
-        VerifyPasscodeResult(rID: '', status: false, retryCount: 0));
+        VerifyPasscodeResult(rID: '', status: false, retryCount: null));
   });
 
   test('getUserVerification', () async {
@@ -221,7 +222,7 @@ void main() {
 
     expect(
         await compassLibraryWrapperPluginInstance
-            .getUserVerification('', '', '', '', ['']),
+            .getUserVerification('', '', FormFactor.CARD, '', ['']),
         UserVerificationResult(
             isMatchFound: false, rID: '', biometricMatchList: []));
   });
@@ -237,7 +238,7 @@ void main() {
         await compassLibraryWrapperPluginInstance.getRegistrationData('', ''),
         RegistrationDataResult(
             isRegisteredInProgram: false,
-            authMethods: [],
+            authType: [],
             modalityType: [],
             rID: ''));
   });

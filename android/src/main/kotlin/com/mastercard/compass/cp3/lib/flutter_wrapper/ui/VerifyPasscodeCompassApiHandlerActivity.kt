@@ -10,7 +10,6 @@ import java.util.Base64
 class VerifyPasscodeCompassApiHandlerActivity: CompassApiHandlerActivity<String>()  {
     override suspend fun callCompassApi() {
         val programGUID: String = intent.getStringExtra(Key.PROGRAM_GUID)!!
-        val rID: String = intent.getStringExtra(Key.RID)!!
         val passcode: String = intent.getStringExtra(Key.PASSCODE)!!
         val formFactor: String = intent.getStringExtra(Key.FORM_FACTOR)!!
         val qrBase64: String? = intent.getStringExtra(Key.QR)

@@ -12,6 +12,7 @@ import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.DATA
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.ERROR_CODE
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.ERROR_MESSAGE
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.RELIANT_APP_GUID
+import com.mastercard.compass.model.card.RegistrationStatusData
 import com.mastercard.compass.model.consent.ConsentResponse
 
 abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.CompassKernelActivity() {
@@ -19,7 +20,6 @@ abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.Co
     companion object {
         protected const val TAG = "CompassApiIntentHandlerActivity"
     }
-
 
     protected val compassApiActivityResult = registerForActivityResult(CompassResultContract<T>()){
         when(it){
@@ -36,8 +36,6 @@ abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.Co
         }
     }
 
-
-
     private lateinit var reliantAppGuid: String
 
     abstract suspend fun callCompassApi()
@@ -46,6 +44,7 @@ abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.Co
         val intent = Intent().apply {
             when (data) {
                 is ConsentResponse -> putExtra(DATA, data)
+                is RegistrationStatusData -> putExtra(DATA, data)
                 is String -> putExtra(DATA, data)
                 is Parcelable -> putExtra(DATA, data)
             }
@@ -93,5 +92,4 @@ abstract class CompassApiHandlerActivity<T : Any> : CompassKernelUIController.Co
     private fun startCompassCoroutine() = lifecycleScope.launchWhenCreated {
         callCompassApi()
     }
-
 }
