@@ -74,13 +74,25 @@ dependencies {
 }
 ```
 
+8. Open `android/build.gradle` file on your reliant application and ad the following line to your build scrips
+
+```gradle
+buildscript {
+    ...
+
+    // Update the version of Kotlin to 1.8.0
+    ext.kotlin_version = '1.8.0'
+    ...
+}
+```
+
 8. Open `android/settings.gradle` file of your reliant application and replace `include: 'app'` with the following line
 
 ```gradle
 include ':app', ':compass_library_wrapper_plugin'
 ```
 
-9. If you are using Android Studio, a pop up notification will appear as given in the below image informing you that the Gradle files have changed. Click on Sync Now to synchronize the project with the Gradle files.
+10. If you are using Android Studio, a pop up notification will appear as given in the below image informing you that the Gradle files have changed. Click on Sync Now to synchronize the project with the Gradle files.
 
 ![](/docs/assets/android-studio-popup.png)
 
