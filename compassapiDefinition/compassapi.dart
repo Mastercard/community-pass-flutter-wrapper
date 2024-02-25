@@ -16,6 +16,87 @@ import 'package:pigeon/pigeon.dart';
   // ),
   copyrightHeader: 'compassapiDefinition/copyright.txt',
 ))
+class DarkThemeColorScheme {
+  String primary;
+  String onPrimary;
+  String primaryContainer;
+  String onPrimaryContainer;
+  String background;
+  String onBackground;
+  String tertiaryContainer;
+
+  DarkThemeColorScheme(
+      this.primary,
+      this.onPrimary,
+      this.primaryContainer,
+      this.onPrimaryContainer,
+      this.background,
+      this.onBackground,
+      this.tertiaryContainer);
+}
+
+class LightThemeColorScheme {
+  String primary;
+  String onPrimary;
+  String primaryContainer;
+  String onPrimaryContainer;
+  String background;
+  String onBackground;
+  String tertiaryContainer;
+
+  LightThemeColorScheme(
+      this.primary,
+      this.onPrimary,
+      this.primaryContainer,
+      this.onPrimaryContainer,
+      this.background,
+      this.onBackground,
+      this.tertiaryContainer);
+}
+
+class ConsentScreenConfig {
+  String? partnerPrivacyPolicyTitle;
+  String? partnerPrivacyPolicyContent;
+  String? partnerPrivacyPolicyExcerptTitle;
+  String? partnerPrivacyPolicyExcerptContent;
+  String? acceptConsentButtonLabel;
+  String? declineConsentButtonLabel;
+  bool? enableCommunityPassPrivacyPolicy;
+  bool? enableBiometricNotice;
+  bool? enablePartnerPrivacyPolicy;
+  String? beforeYouProceedText;
+  int? beforeYouProceedFontSize;
+  int? consentTitleFontSize;
+  int? consentContentFontSize;
+  int? switchLabelFontSize;
+  int? buttonLabelFontSize;
+  int? buttonBorderRadius;
+  int? buttonHeight;
+  DarkThemeColorScheme? darkThemeColorScheme;
+  LightThemeColorScheme? lightThemeColorScheme;
+
+  ConsentScreenConfig(
+      this.partnerPrivacyPolicyTitle,
+      this.partnerPrivacyPolicyContent,
+      this.partnerPrivacyPolicyExcerptTitle,
+      this.partnerPrivacyPolicyExcerptContent,
+      this.acceptConsentButtonLabel,
+      this.declineConsentButtonLabel,
+      this.enableCommunityPassPrivacyPolicy,
+      this.enableBiometricNotice,
+      this.enablePartnerPrivacyPolicy,
+      this.beforeYouProceedText,
+      this.beforeYouProceedFontSize,
+      this.consentTitleFontSize,
+      this.consentContentFontSize,
+      this.switchLabelFontSize,
+      this.buttonLabelFontSize,
+      this.buttonBorderRadius,
+      this.buttonHeight,
+      this.darkThemeColorScheme,
+      this.lightThemeColorScheme);
+}
+
 enum EnrolmentStatus { EXISTING, NEW }
 
 enum ResponseStatus { SUCCESS, ERROR, UNDEFINED }
@@ -32,11 +113,47 @@ enum SVAType { FinancialSVA, EVoucherSVA }
 
 enum EVoucherType { COMMODITY, POINT }
 
+enum ConsentStatus { CONSENT_GRANTED, CONSENT_DENIED }
+
+class AdditionalInfo {
+  final String? consentID;
+  final String? responseStatus;
+
+  AdditionalInfo(this.consentID, this.responseStatus);
+}
+
+class ConsentResult {
+  final bool? communityPassPrivacyPolicyAccepted;
+  final bool? communityPassBiometricNoticeAccepted;
+  final bool? partnerPrivacyPolicyAccepted;
+  final AdditionalInfo? additionalInfo;
+
+  ConsentResult(
+      this.communityPassPrivacyPolicyAccepted,
+      this.communityPassBiometricNoticeAccepted,
+      this.partnerPrivacyPolicyAccepted,
+      this.additionalInfo);
+}
+
 class SaveBiometricConsentResult {
   final String consentID;
   final ResponseStatus responseStatus;
 
   SaveBiometricConsentResult(this.consentID, this.responseStatus);
+}
+
+class CommunityPassConsentScreenResult {
+  final ConsentStatus status;
+  final ConsentResult? result;
+
+  CommunityPassConsentScreenResult(this.status, this.result);
+}
+
+class CommunityPassConsentWithPreBuiltUIResult {
+  final String consentID;
+  final ResponseStatus responseStatus;
+
+  CommunityPassConsentWithPreBuiltUIResult(this.consentID, this.responseStatus);
 }
 
 class RegisterUserWithBiometricsResult {
@@ -89,6 +206,15 @@ class UserVerificationResult {
   final List<Match?> biometricMatchList;
 
   UserVerificationResult(this.isMatchFound, this.rID, this.biometricMatchList);
+}
+
+class UserIdentificationResult {
+  final bool isMatchFound;
+  final String rID;
+  final List<Match?> biometricMatchList;
+
+  UserIdentificationResult(
+      this.isMatchFound, this.rID, this.biometricMatchList);
 }
 
 class RegistrationDataResult {
@@ -165,6 +291,12 @@ abstract class CommunityPassApi {
       String reliantGUID, String programGUID, bool consumerConsentValue);
 
   @async
+  CommunityPassConsentScreenResult communityPassConsentWithPreBuiltUI(
+      String reliantGUID,
+      String programGUID,
+      ConsentScreenConfig? consentScreenConfig);
+
+  @async
   RegisterUserWithBiometricsResult getRegisterUserWithBiometrics(
       String reliantGUID,
       String programGUID,
@@ -236,4 +368,14 @@ abstract class CommunityPassApi {
   @async
   GenerateCpUserProfileResult getGenerateCpUserProfile(
       String reliantGUID, String programGUID, String rID, String? passcode);
+
+  @async
+  UserIdentificationResult getUserIdentification(
+    String reliantGUID,
+    String programGUID,
+    List<String> modalities,
+    bool cacheHashesIfIDentified,
+    String? qrBase64,
+    FormFactor formFactor,
+  );
 }

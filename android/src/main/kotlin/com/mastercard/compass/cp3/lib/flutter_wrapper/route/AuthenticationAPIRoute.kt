@@ -7,11 +7,14 @@ import com.mastercard.compass.cp3.lib.flutter_wrapper.FlutterError
 import com.mastercard.compass.cp3.lib.flutter_wrapper.FormFactor
 import com.mastercard.compass.cp3.lib.flutter_wrapper.Match
 import com.mastercard.compass.cp3.lib.flutter_wrapper.RegistrationDataResult
+import com.mastercard.compass.cp3.lib.flutter_wrapper.UserIdentificationResult
 import com.mastercard.compass.cp3.lib.flutter_wrapper.UserVerificationResult
 import com.mastercard.compass.cp3.lib.flutter_wrapper.VerifyPasscodeResult
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.GetRegistrationDataCompassApiHandlerActivity
+import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.UserIdentificationCompassApiHandlerActivity
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.UserVerificationCompassApiHandlerActivity
 import com.mastercard.compass.cp3.lib.flutter_wrapper.ui.VerifyPasscodeCompassApiHandlerActivity
+import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.CACHE_HASHES_IF_IDENTIFIED
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.DATA
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.ERROR_CODE
 import com.mastercard.compass.cp3.lib.flutter_wrapper.util.Key.ERROR_MESSAGE
@@ -32,11 +35,13 @@ class AuthenticationAPIRoute(
     private lateinit var registrationDataResultCallback: (Result<RegistrationDataResult>) -> Unit
     private lateinit var verifyPasscodeDataResultCallback: (Result<VerifyPasscodeResult>) -> Unit
     private lateinit var userVerificationResultCallback: (Result<UserVerificationResult>) -> Unit
+    private lateinit var userIdentificationResultCallback: (Result<UserIdentificationResult>) -> Unit
 
     companion object {
         const val REGISTRATION_DATA_REQUEST_CODE = 300
         const val VERIFY_PASSCODE_REQUEST_CODE = 301
         const val USER_VERIFICATION_REQUEST_CODE = 302
+        const val USER_IDENTIFICATION_REQUEST_CODE = 303
     }
 
     fun startGetRegistrationDataIntent(reliantGUID: String, programGUID: String, callback: (Result<RegistrationDataResult>) -> Unit){
@@ -91,6 +96,29 @@ class AuthenticationAPIRoute(
         activity.startActivityForResult(intent, USER_VERIFICATION_REQUEST_CODE)
     }
 
+    fun startUserIdentificationIntent(
+        reliantGUID: String,
+        programGUID: String,
+        modalities: List<String>,
+        qrBase64: String?,
+        cacheHashesIfIdentified: Boolean,
+        formFactor: FormFactor,
+        callback: (Result<UserIdentificationResult>) -> Unit
+    ) {
+        userIdentificationResultCallback = callback
+
+        val intent = Intent(activity, UserIdentificationCompassApiHandlerActivity::class.java).apply {
+            putExtra(RELIANT_APP_GUID, reliantGUID)
+            putExtra(PROGRAM_GUID, programGUID)
+            putExtra(QR, qrBase64)
+            putExtra(MODALITIES, modalities as ArrayList)
+            putExtra(CACHE_HASHES_IF_IDENTIFIED, cacheHashesIfIdentified)
+            putExtra(FORM_FACTOR, formFactor.toString())
+        }
+
+        activity.startActivityForResult(intent, USER_IDENTIFICATION_REQUEST_CODE)
+    }
+
     fun handleGetRegistrationDataIntentResponse(
         resultCode: Int,
         data: Intent?,
@@ -139,6 +167,23 @@ class AuthenticationAPIRoute(
                 val code = data?.extras?.get(ERROR_CODE) ?: 0
                 val message =  data?.extras?.get(ERROR_MESSAGE) ?: "Something went wrong."
                 userVerificationResultCallback(Result.failure(FlutterError(code.toString(), message.toString(), null)))
+            }
+        }
+    }
+
+    fun handleUserIdentificationResponse(resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                val jwt = data?.extras?.get(DATA).toString()
+                val response = helper.parseJWT(jwt) as CompassKernelUIController.CompassHelper.CompassJWTResponse.Success
+
+                val result = UserIdentificationResult.fromList(listOf(response.isMatchFound, response.rId, parseBiometricMatchList(response.biometricMatchList)))
+                userIdentificationResultCallback(Result.success(result))
+            }
+            Activity.RESULT_CANCELED -> {
+                val code = data?.extras?.get(ERROR_CODE) ?: 0
+                val message =  data?.extras?.get(ERROR_MESSAGE) ?: "Something went wrong."
+                userIdentificationResultCallback(Result.failure(FlutterError(code.toString(), message.toString(), null)))
             }
         }
     }

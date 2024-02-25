@@ -20,6 +20,15 @@ class PigeonCompassLibraryWrapperPlugin
   }
 
   @override
+  Future<CommunityPassConsentScreenResult> communityPassConsentWithPreBuiltUI(
+      String reliantGUID,
+      String programGUID,
+      ConsentScreenConfig consentScreenConfig) async {
+    return _api.communityPassConsentWithPreBuiltUI(
+        reliantGUID, programGUID, consentScreenConfig);
+  }
+
+  @override
   Future<RegisterUserWithBiometricsResult> getRegisterUserWithBiometrics(
       String reliantGUID,
       String programGUID,
@@ -123,6 +132,19 @@ class PigeonCompassLibraryWrapperPlugin
   Future<CreateSVAResult> getCreateSVA(
       String reliantGUID, String programGUID, String? rID, SVA sva) async {
     return _api.getCreateSVA(reliantGUID, programGUID, rID, sva);
+  }
+
+  @override
+  Future<UserIdentificationResult> getUserIdentification(
+    String reliantGUID,
+    String programGUID,
+    List<String> modalities,
+    bool cacheHashesIfIDentified,
+    String? qrBase64,
+    FormFactor formFactor,
+  ) async {
+    return _api.getUserIdentification(reliantGUID, programGUID, modalities,
+        cacheHashesIfIDentified, qrBase64, formFactor);
   }
 
   @override

@@ -120,6 +120,25 @@ class MockCompassLibraryWrapperPluginPlatform
           String? passcode) =>
       Future.value(GenerateCpUserProfileResult(
           token: '', consumerDeviceNumber: '', message: ''));
+
+  @override
+  Future<UserIdentificationResult> getUserIdentification(
+          String reliantGUID,
+          String programGUID,
+          List<String> modalities,
+          bool cacheHashesIfIDentified,
+          String? qrBase64,
+          FormFactor formFactor) =>
+      Future.value(UserIdentificationResult(
+          isMatchFound: true, rID: '', biometricMatchList: []));
+
+  @override
+  Future<CommunityPassConsentScreenResult> communityPassConsentWithPreBuiltUI(
+          String reliantGUID,
+          String programGUID,
+          ConsentScreenConfig consentScreenConfig) =>
+      Future.value(CommunityPassConsentScreenResult(
+          status: ConsentStatus.CONSENT_DENIED, result: null));
 }
 
 void main() {
@@ -142,6 +161,58 @@ void main() {
             '', '', true),
         SaveBiometricConsentResult(
             consentID: '', responseStatus: ResponseStatus.SUCCESS));
+  });
+
+  test('communityPassConsentWithPreBuiltUI', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance
+            .communityPassConsentWithPreBuiltUI(
+                '',
+                '',
+                ConsentScreenConfig(
+                    partnerPrivacyPolicyTitle: "partnerPrivacyPolicyTitle",
+                    partnerPrivacyPolicyContent: "partnerPrivacyPolicyContent",
+                    partnerPrivacyPolicyExcerptTitle:
+                        "partnerPrivacyPolicyExcerptTitle",
+                    partnerPrivacyPolicyExcerptContent:
+                        "partnerPrivacyPolicyExcerptContent",
+                    acceptConsentButtonLabel: "acceptConsentButtonLabel",
+                    declineConsentButtonLabel: "declineConsentButtonLabel",
+                    enableCommunityPassPrivacyPolicy: true,
+                    enableBiometricNotice: true,
+                    enablePartnerPrivacyPolicy: true,
+                    beforeYouProceedText: "beforeYouProceedText",
+                    beforeYouProceedFontSize: 14,
+                    consentTitleFontSize: 14,
+                    consentContentFontSize: 14,
+                    switchLabelFontSize: 14,
+                    buttonLabelFontSize: 14,
+                    buttonBorderRadius: 50,
+                    buttonHeight: 50,
+                    darkThemeColorScheme: DarkThemeColorScheme(
+                        primary: "#000000",
+                        onPrimary: "#000000",
+                        primaryContainer: "#000000",
+                        onPrimaryContainer: "#000000",
+                        background: "#000000",
+                        onBackground: "#000000",
+                        tertiaryContainer: "#000000"),
+                    lightThemeColorScheme: LightThemeColorScheme(
+                        primary: "#ffffff",
+                        onPrimary: "#ffffff",
+                        primaryContainer: "#ffffff",
+                        onPrimaryContainer: "#ffffff",
+                        background: "#ffffff",
+                        onBackground: "#ffffff",
+                        tertiaryContainer: "#ffffff"))),
+        CommunityPassConsentScreenResult(
+            status: ConsentStatus.CONSENT_DENIED, result: null));
   });
 
   test('getRegisterUserWithBiometrics', () async {
@@ -224,6 +295,20 @@ void main() {
         await compassLibraryWrapperPluginInstance
             .getUserVerification('', '', FormFactor.CARD, '', ['']),
         UserVerificationResult(
+            isMatchFound: false, rID: '', biometricMatchList: []));
+  });
+
+  test('getUserIdentification', () async {
+    CompassLibraryWrapperPlugin compassLibraryWrapperPluginInstance =
+        CompassLibraryWrapperPlugin();
+    MockCompassLibraryWrapperPluginPlatform fakePlatform =
+        MockCompassLibraryWrapperPluginPlatform();
+    CompassLibraryWrapperPluginPlatform.instance = fakePlatform;
+
+    expect(
+        await compassLibraryWrapperPluginInstance.getUserIdentification(
+            '', '', [], true, '', FormFactor.NONE),
+        UserIdentificationResult(
             isMatchFound: false, rID: '', biometricMatchList: []));
   });
 

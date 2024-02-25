@@ -50,6 +50,32 @@ class _WritePasscodeScreenState extends State<WritePasscodeScreen>
   String globalError = '';
   bool globalLoading = false;
 
+  Future<void> getGenerateCpUserProfile(String reliantGUID, String programGUID,
+      String rID, String? passcode) async {
+    if (mounted) {
+      setState(() {
+        globalLoading = true;
+      });
+    }
+    GenerateCpUserProfileResult result;
+
+    try {
+      result = await _communityPassFlutterplugin.getGenerateCpUserProfile(
+          reliantGUID, programGUID, rID, passcode);
+
+      if (!mounted) return;
+      setState(() {
+        globalLoading = false;
+      });
+    } on PlatformException catch (ex) {
+      setState(() {
+        if (!mounted) return;
+        globalError = "${ex.code}: ${ex.message}";
+        globalLoading = false;
+      });
+    }
+  }
+
   Future<void> getWritePasscode(String reliantGUID, String programGUID,
       String rID, String passcode) async {
     if (mounted) {
@@ -71,6 +97,7 @@ class _WritePasscodeScreenState extends State<WritePasscodeScreen>
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => WriteSuccessfulScreen(navigationParams: {
               "rID": receivedParams['rID']!,
+              "formFactor": "CARD",
               "consumerDeviceNumber": receivedParams['consumerDeviceNumber']!,
             }),
           ));
@@ -161,11 +188,19 @@ class _WritePasscodeScreenState extends State<WritePasscodeScreen>
                           onPressed: globalLoading
                               ? null
                               : (() {
-                                  getWritePasscode(
-                                      _reliantAppGuid,
-                                      _programGuid,
-                                      receivedParams['rID']!,
-                                      myController.text.toString());
+                                  if (receivedParams["formFactor"] == "CARD") {
+                                    getWritePasscode(
+                                        _reliantAppGuid,
+                                        _programGuid,
+                                        receivedParams['rID']!,
+                                        myController.text.toString());
+                                  } else {
+                                    getGenerateCpUserProfile(
+                                        _reliantAppGuid,
+                                        _programGuid,
+                                        receivedParams['rID']!,
+                                        myController.text.toString());
+                                  }
                                 }),
                           child: const Text('Start registration')))),
             ]));

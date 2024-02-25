@@ -35,6 +35,8 @@ dependencies:
   flutter_dotenv: ^5.0.2
   qr_flutter: ^4.1.0
   simple_barcode_scanner: ^0.0.8
+  path_provider: ^2.0.15
+  share_plus: ^7.0.2
 
 dev_dependencies:
   flutter_test:

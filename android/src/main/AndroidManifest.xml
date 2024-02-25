@@ -17,5 +17,7 @@
         <activity android:name=".ui.VerifyPasscodeCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
         <activity android:name=".ui.GetRegistrationDataCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
         <activity android:name=".ui.BlacklistFormFactorApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.UserIdentificationCompassApiHandlerActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.ConsentUICompassApiActivityHandler" android:theme="@style/Theme.Transparent"/>
     </application>
 </manifest>

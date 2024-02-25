@@ -138,7 +138,7 @@ class _ScanCommunityPassQRScreenState extends State<ScanCommunityPassQRScreen>
                               : (() {
                                   launchQRCamera();
                                 }),
-                          child: const Text('open Camera')))),
+                          child: const Text('Open Camera')))),
             ]));
   }
 }

@@ -1,3 +1,4 @@
+import 'package:compass_library_wrapper_plugin_example/writePasscodeScreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -60,7 +61,7 @@ class _RegisterBasicUserScreenState extends State<RegisterBasicUserScreen>
       setState(() {
         globalLoading = false;
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => WriteProfileScreen(navigationParams: {
+            builder: (context) => WritePasscodeScreen(navigationParams: {
                   "rID": result.rID,
                   "registrationType": 'BASIC_USER',
                 })));

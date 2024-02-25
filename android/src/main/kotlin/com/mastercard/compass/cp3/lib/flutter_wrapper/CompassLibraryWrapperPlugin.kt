@@ -45,7 +45,7 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     CommunityPassApi.setUp(binding.binaryMessenger, this)
     context = binding.applicationContext
-    helperObject = CompassKernelUIController.CompassHelper(context);
+    helperObject = CompassKernelUIController.CompassHelper(context)
     defaultCryptoService = DefaultCryptoService(helperObject)
   }
 
@@ -81,18 +81,20 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
       UserRegistrationAPIRoute.BIOMETRIC_USER_REGISTRATION_REQUEST_CODE -> userRegistrationAPIRoute.handleBiometricRegistrationResponse(resultCode, data)
       UserRegistrationAPIRoute.BASIC_USER_REGISTRATION_REQUEST_CODE -> userRegistrationAPIRoute.handleRegisterBasicUserResponse(resultCode, data)
       UserRegistrationAPIRoute.GENERATE_CP_USER_PROFILE_REQUEST_CODE -> userRegistrationAPIRoute.handleGenerateCpUserProfileResponse(resultCode, data)
+      UserRegistrationAPIRoute.COMPASS_CONSENT_SCREEN_REQUEST_CODE -> userRegistrationAPIRoute.handleCompassConsentScreenResponse(resultCode, data)
       ConsumerDeviceAPIRoute.WRITE_PROFILE_REQUEST_CODE -> consumerDeviceApiRoute.handleWriteProfileIntentResponse(resultCode, data)
       ConsumerDeviceAPIRoute.WRITE_PASSCODE_REQUEST_CODE -> consumerDeviceApiRoute.handleWritePasscodeIntentResponse(resultCode, data)
       ConsumerDeviceAPIRoute.BLACKLIST_FORM_FACTOR_REQUEST_CODE -> consumerDeviceApiRoute.handleBlacklistFormFactorIntentResponse(resultCode, data)
       AuthenticationAPIRoute.REGISTRATION_DATA_REQUEST_CODE -> authenticationAPIRoute.handleGetRegistrationDataIntentResponse(resultCode, data)
       AuthenticationAPIRoute.VERIFY_PASSCODE_REQUEST_CODE -> authenticationAPIRoute.handleVerifyPasscodeDataResponse(resultCode, data)
       AuthenticationAPIRoute.USER_VERIFICATION_REQUEST_CODE -> authenticationAPIRoute.handleUserVerificationResponse(resultCode, data)
+      AuthenticationAPIRoute.USER_IDENTIFICATION_REQUEST_CODE -> authenticationAPIRoute.handleUserIdentificationResponse(resultCode, data)
       ProgramSpaceAPIRoute.READ_PROGRAM_SPACE_REQUEST_CODE -> programSpaceAPIRoute.handleReadProgramSPaceIntentResponse(resultCode, data)
       ProgramSpaceAPIRoute.WRITE_PROGRAM_SPACE_REQUEST_CODE -> programSpaceAPIRoute.handleWriteProgramSpaceIntentResponse(resultCode, data)
       SVAOperationAPIRoute.CREATE_SVA_REQUEST_CODE -> svaOperationAPIRoute.handleCreateSvaIntentResponse(resultCode, data)
       SVAOperationAPIRoute.READ_SVA_REQUEST_CODE -> svaOperationAPIRoute.handleReadSvaIntentResponse(resultCode, data)
     }
-    return true;
+    return true
   }
 
   override fun saveBiometricConsent(
@@ -105,6 +107,20 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
       reliantGUID = reliantGUID,
       programGUID = programGUID,
       consumerConsentValue = consumerConsentValue,
+      callback = callback
+    )
+  }
+
+  override fun communityPassConsentWithPreBuiltUI(
+    reliantGUID: String,
+    programGUID: String,
+    consentScreenConfig: ConsentScreenConfig?,
+    callback: (Result<CommunityPassConsentScreenResult>) -> Unit
+  ) {
+    userRegistrationAPIRoute.startCompassConsentScreenIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      consentScreenConfigJson = consentScreenConfig,
       callback = callback
     )
   }
@@ -314,6 +330,26 @@ class CompassLibraryWrapperPlugin: FlutterPlugin, MethodChannel.MethodCallHandle
       programGUID = programGUID,
       rID = rID,
       passcode = passcode,
+      callback = callback
+    )
+  }
+
+  override fun getUserIdentification(
+    reliantGUID: String,
+    programGUID: String,
+    modalities: List<String>,
+    cacheHashesIfIDentified: Boolean,
+    qrBase64: String?,
+    formFactor: FormFactor,
+    callback: (Result<UserIdentificationResult>) -> Unit
+  ) {
+    authenticationAPIRoute.startUserIdentificationIntent(
+      reliantGUID = reliantGUID,
+      programGUID = programGUID,
+      modalities = modalities,
+      qrBase64 = qrBase64,
+      cacheHashesIfIdentified = cacheHashesIfIDentified,
+      formFactor = formFactor,
       callback = callback
     )
   }

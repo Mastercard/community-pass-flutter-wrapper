@@ -31,6 +31,14 @@ abstract class CompassLibraryWrapperPluginPlatform extends PlatformInterface {
         'saveBiometricConsent() has not been implemented.');
   }
 
+  Future<CommunityPassConsentScreenResult> communityPassConsentWithPreBuiltUI(
+      String reliantGUID,
+      String programGUID,
+      ConsentScreenConfig consentScreenConfig) async {
+    throw UnimplementedError(
+        'communityPassConsentWithPreBuiltUI() has not been implemented.');
+  }
+
   Future<RegisterUserWithBiometricsResult> getRegisterUserWithBiometrics(
       String reliantGUID,
       String programGUID,
@@ -117,6 +125,18 @@ abstract class CompassLibraryWrapperPluginPlatform extends PlatformInterface {
   Future<CreateSVAResult> getCreateSVA(
       String reliantGUID, String programGUID, String? rID, SVA sva) async {
     throw UnimplementedError('getCreateSVA() has not been implemented.');
+  }
+
+  Future<UserIdentificationResult> getUserIdentification(
+    String reliantGUID,
+    String programGUID,
+    List<String> modalities,
+    bool cacheHashesIfIDentified,
+    String? qrBase64,
+    FormFactor formFactor,
+  ) async {
+    throw UnimplementedError(
+        'getUserIdentification() has not been implemented.');
   }
 
   Future<GenerateCpUserProfileResult> getGenerateCpUserProfile(

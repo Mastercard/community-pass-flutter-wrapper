@@ -27,6 +27,51 @@ void main() {
             consentID: '', responseStatus: ResponseStatus.SUCCESS));
   });
 
+  test('communityPassConsentWithPreBuiltUI', () async {
+    expect(
+        await platform.communityPassConsentWithPreBuiltUI(
+            '',
+            '',
+            ConsentScreenConfig(
+                partnerPrivacyPolicyTitle: "partnerPrivacyPolicyTitle",
+                partnerPrivacyPolicyContent: "partnerPrivacyPolicyContent",
+                partnerPrivacyPolicyExcerptTitle:
+                    "partnerPrivacyPolicyExcerptTitle",
+                partnerPrivacyPolicyExcerptContent:
+                    "partnerPrivacyPolicyExcerptContent",
+                acceptConsentButtonLabel: "acceptConsentButtonLabel",
+                declineConsentButtonLabel: "declineConsentButtonLabel",
+                enableCommunityPassPrivacyPolicy: true,
+                enableBiometricNotice: true,
+                enablePartnerPrivacyPolicy: true,
+                beforeYouProceedText: "beforeYouProceedText",
+                beforeYouProceedFontSize: 14,
+                consentTitleFontSize: 14,
+                consentContentFontSize: 14,
+                switchLabelFontSize: 14,
+                buttonLabelFontSize: 14,
+                buttonBorderRadius: 50,
+                buttonHeight: 50,
+                darkThemeColorScheme: DarkThemeColorScheme(
+                    primary: "#000000",
+                    onPrimary: "#000000",
+                    primaryContainer: "#000000",
+                    onPrimaryContainer: "#000000",
+                    background: "#000000",
+                    onBackground: "#000000",
+                    tertiaryContainer: "#000000"),
+                lightThemeColorScheme: LightThemeColorScheme(
+                    primary: "#ffffff",
+                    onPrimary: "#ffffff",
+                    primaryContainer: "#ffffff",
+                    onPrimaryContainer: "#ffffff",
+                    background: "#ffffff",
+                    onBackground: "#ffffff",
+                    tertiaryContainer: "#ffffff"))),
+        CommunityPassConsentScreenResult(
+            status: ConsentStatus.CONSENT_DENIED, result: null));
+  });
+
   test('getRegisterUserWithBiometrics', () async {
     expect(
         await platform.getRegisterUserWithBiometrics(
@@ -61,6 +106,14 @@ void main() {
   test('getUserVerification', () async {
     expect(
         await platform.getUserVerification('', '', FormFactor.CARD, '', ['']),
+        UserVerificationResult(
+            isMatchFound: false, rID: '', biometricMatchList: []));
+  });
+
+  test('getUserIdentification', () async {
+    expect(
+        await platform.getUserIdentification(
+            '', '', [], true, '', FormFactor.CARD),
         UserVerificationResult(
             isMatchFound: false, rID: '', biometricMatchList: []));
   });

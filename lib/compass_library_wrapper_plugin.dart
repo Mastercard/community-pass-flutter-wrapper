@@ -9,6 +9,15 @@ class CompassLibraryWrapperPlugin {
         .saveBiometricConsent(reliantGUID, programGUID, consumerConsentValue);
   }
 
+  Future<CommunityPassConsentScreenResult> communityPassConsentWithPreBuiltUI(
+      String reliantGUID,
+      String programGUID,
+      ConsentScreenConfig consentScreenConfig) async {
+    return CompassLibraryWrapperPluginPlatform.instance
+        .communityPassConsentWithPreBuiltUI(
+            reliantGUID, programGUID, consentScreenConfig);
+  }
+
   Future<RegisterUserWithBiometricsResult> getRegisterUserWithBiometrics(
       String reliantGUID,
       String programGUID,
@@ -56,6 +65,23 @@ class CompassLibraryWrapperPlugin {
       List<String> modalities) async {
     return CompassLibraryWrapperPluginPlatform.instance.getUserVerification(
         reliantGUID, programGUID, formFactor, qrBase64, modalities);
+  }
+
+  Future<UserIdentificationResult> getUserIdentification(
+    String reliantGUID,
+    String programGUID,
+    List<String> modalities,
+    bool cacheHashesIfIDentified,
+    String? qrBase64,
+    FormFactor formFactor,
+  ) async {
+    return CompassLibraryWrapperPluginPlatform.instance.getUserIdentification(
+        reliantGUID,
+        programGUID,
+        modalities,
+        cacheHashesIfIDentified,
+        qrBase64,
+        formFactor);
   }
 
   Future<RegistrationDataResult> getRegistrationData(

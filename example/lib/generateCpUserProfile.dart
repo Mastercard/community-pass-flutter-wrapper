@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
@@ -8,28 +7,42 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:compass_library_wrapper_plugin_example/color_utils.dart';
 import 'package:compass_library_wrapper_plugin_example/main.dart';
+import 'dart:async';
+import 'package:flutter/services.dart';
+import 'package:compass_library_wrapper_plugin_example/writePasscodeScreen.dart';
+import 'package:compass_library_wrapper_plugin_example/writeSuccessfulScreen.dart';
+import 'package:compass_library_wrapper_plugin/compassapi.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class WriteSuccessfulScreen extends StatefulWidget {
+class GenerateCpUserProfileScreen extends StatefulWidget {
   Map<String, String> navigationParams;
-  WriteSuccessfulScreen({super.key, required this.navigationParams});
+  GenerateCpUserProfileScreen({super.key, required this.navigationParams});
 
   @override
-  State<WriteSuccessfulScreen> createState() =>
-      _WriteSuccessfulScreenState(navigationParams);
+  State<GenerateCpUserProfileScreen> createState() =>
+      _GenerateCpUserProfileScreenState(navigationParams);
 }
 
-class _WriteSuccessfulScreenState extends State<WriteSuccessfulScreen> {
+class _GenerateCpUserProfileScreenState
+    extends State<GenerateCpUserProfileScreen> {
   Map<String, String> receivedParams;
-  _WriteSuccessfulScreenState(this.receivedParams);
+  _GenerateCpUserProfileScreenState(this.receivedParams);
 
+  final _communityPassFlutterplugin = CommunityPassApi();
   final GlobalKey globalKey = GlobalKey();
+  static final String _reliantAppGuid = dotenv.env['RELIANT_APP_GUID'] ?? '';
+  static final String _programGuid = dotenv.env['PROGRAM_GUID'] ?? '';
 
-  String consumerDeviceNumber = '';
+  String globalError = '';
+  bool globalLoading = false;
+  String? passcode;
   String rID = '';
+  String formFactor = '';
 
   @override
   void initState() {
-    consumerDeviceNumber = receivedParams['consumerDeviceNumber']!;
+    formFactor = receivedParams['formFactor']!;
+    passcode = receivedParams['passcode'];
     rID = receivedParams['rID']!;
     super.initState();
   }
@@ -47,6 +60,32 @@ class _WriteSuccessfulScreenState extends State<WriteSuccessfulScreen> {
     await file.writeAsBytes(pngBytes);
     await Share.shareXFiles([XFile(file.path)], text: 'Community Pass QR Code');
     file.delete();
+  }
+
+  Future<void> getGenerateCpUserProfile(String reliantGUID, String programGUID,
+      String rID, String passcode) async {
+    if (mounted) {
+      setState(() {
+        globalLoading = true;
+      });
+    }
+    GenerateCpUserProfileResult result;
+
+    try {
+      result = await _communityPassFlutterplugin.getGenerateCpUserProfile(
+          reliantGUID, programGUID, rID, passcode);
+
+      if (!mounted) return;
+      setState(() {
+        globalLoading = false;
+      });
+    } on PlatformException catch (ex) {
+      setState(() {
+        if (!mounted) return;
+        globalError = "${ex.code}: ${ex.message}";
+        globalLoading = false;
+      });
+    }
   }
 
   @override
@@ -68,13 +107,6 @@ class _WriteSuccessfulScreenState extends State<WriteSuccessfulScreen> {
                           'User registration was successful!',
                           style:
                               TextStyle(fontSize: 20, color: mastercardOrange),
-                        )),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 2),
-                        child: Text(
-                          'Consumer Device Number: $consumerDeviceNumber',
-                          style: const TextStyle(fontSize: 16),
                         )),
                     Padding(
                         padding: const EdgeInsets.symmetric(
@@ -108,13 +140,6 @@ class _WriteSuccessfulScreenState extends State<WriteSuccessfulScreen> {
                           'User registration was successful!',
                           style:
                               TextStyle(fontSize: 20, color: mastercardOrange),
-                        )),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 2),
-                        child: Text(
-                          'Consumer Device Number: $consumerDeviceNumber',
-                          style: const TextStyle(fontSize: 16),
                         )),
                     Padding(
                         padding: const EdgeInsets.symmetric(
