@@ -86,7 +86,7 @@ buildscript {
 }
 ```
 
-8. Open `android/settings.gradle` file of your reliant application and replace `include: 'app'` with the following line
+9. Open `android/settings.gradle` file of your reliant application and replace `include: 'app'` with the following line
 
 ```gradle
 include ':app', ':compass_library_wrapper_plugin'
