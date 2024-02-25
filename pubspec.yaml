@@ -1,6 +1,6 @@
 name: compass_library_wrapper_plugin
 description: A Flutter Wrappper for Mastercard's Community Pass Kernel (CPK), implementing all Community Pass Actions
-version: 0.0.1-alpha
+version: 0.0.2
 homepage:
 
 environment:
