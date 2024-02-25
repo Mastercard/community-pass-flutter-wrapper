@@ -77,8 +77,9 @@ android {
 
 dependencies {
     // Use local aar inside flutter plugin
-//     implementation (name: "community-pass-library-v2.5.1", ext:'aar') // for release - assembleRelease //Android Studio and cli
+//     implementation (name: "community-pass-library-v2.6.1", ext:'aar') // for release - assembleRelease //Android Studio and cli
 
+    // Use this for Dev
     implementation files("libs/community-pass-library-v2.6.1.aar")
 
     implementation 'com.google.android.material:material:1.9.0'
