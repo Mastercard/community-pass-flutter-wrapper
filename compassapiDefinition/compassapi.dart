@@ -135,13 +135,6 @@ class ConsentResult {
       this.additionalInfo);
 }
 
-class SaveBiometricConsentResult {
-  final String consentID;
-  final ResponseStatus responseStatus;
-
-  SaveBiometricConsentResult(this.consentID, this.responseStatus);
-}
-
 class CommunityPassConsentScreenResult {
   final ConsentStatus status;
   final ConsentResult? result;
@@ -149,11 +142,11 @@ class CommunityPassConsentScreenResult {
   CommunityPassConsentScreenResult(this.status, this.result);
 }
 
-class CommunityPassConsentWithPreBuiltUIResult {
+class SaveBiometricConsentResult {
   final String consentID;
   final ResponseStatus responseStatus;
 
-  CommunityPassConsentWithPreBuiltUIResult(this.consentID, this.responseStatus);
+  SaveBiometricConsentResult(this.consentID, this.responseStatus);
 }
 
 class RegisterUserWithBiometricsResult {

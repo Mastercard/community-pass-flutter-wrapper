@@ -1,6 +1,6 @@
 ## 1. Pre-Transaction Phase
 
-This phase will include all user setup actions that facilitate the onboarding of Users for Community Pass Digital ID, multi-wallet and acceptance accounts. These actions provides the ability to issue a Community Pass credential to a user (using cards (or QR) and onboard them onto Community Pass:
+This phase will include all user setup actions that facilitate the onboarding of Users for Community Pass Digital ID, multi-wallet and acceptance accounts. These actions provides the ability to issue a Community Pass credential to a user using cards (or QR) and onboard them onto Community Pass:
 
 ✅ Action: Enroll a new user and Issue card using Biometrics
 
@@ -14,7 +14,7 @@ This phase will include all user setup actions that facilitate the onboarding of
           ✅  Implement method
           ✅  Add example
 
-⬜ Action: Enroll a new user and issue card using Passcode
+✅ Action: Enroll a new user and issue card using Passcode
 
       saveBiometricConsent()
           ✅ Implement method
@@ -23,10 +23,10 @@ This phase will include all user setup actions that facilitate the onboarding of
           ✅ Implement method
           ✅ Add example
       getGenerateCpUserProfileActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
 
-⬜ Action: Enroll a new user and issue QR using Biometrics
+✅ Action: Enroll a new user and issue QR using Biometrics
 
       saveBiometricConsent()
           ✅ Implement method
@@ -35,10 +35,10 @@ This phase will include all user setup actions that facilitate the onboarding of
           ✅ Implement method
           ✅ Add example
       getGenerateCpUserProfileActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
 
-⬜ Action: Enroll a new user and issue QR using passcode
+✅ Action: Enroll a new user and issue QR using passcode
 
       saveBiometricConsent()
           ✅ Implement method
@@ -47,42 +47,42 @@ This phase will include all user setup actions that facilitate the onboarding of
           ✅ Implement method
           ✅ Add example
       getGenerateCpUserProfileActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
 
 ## 2. Transaction Phase
 
 This phase will include all actions and activities that enable you to conduct a life transaction using Community Pass. These actions provides safe and secure interactions between an acceptor and end-users in both online and off-line environments:
 
-⬜ Action: Authenticate Biometric Registered User on Program using Form Factor-Card
+✅ Action: Authenticate Biometric Registered User on Program using Form Factor-Card
 
       getRegistrationDataActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
       getUserVerificationActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
 
 ⬜ Action: Authenticate Passcode Registered User on Program using Form Factor-Card
 
       getRegistrationDataActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
       getVerifyPasscodeActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
 
 ⬜ Action: Authenticate Biometric Registered User on Program using Form Factor-QR
 
       getUserVerificationActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
 
 ⬜ Action: Authenticate Passcode Registered User on Program using Form Factor-QR
 
       getVerifyPasscodeActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
 
 ## 3. Admin-Transaction Phase
 
@@ -91,14 +91,14 @@ This phase demonstrates actions and activities that enable you to manage any act
 ⬜ Action: Add Biometric Details to Passcode Authenticated User and Update Card
 
       getRegistrationDataActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
       saveBiometricConsent()
           ✅ Implement method
           ✅ Add example
       getVerifyPasscodeActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
       getAddBiometricsActivityIntent()
           ⬜ Implement method
           ⬜ Add example
@@ -112,29 +112,29 @@ This phase demonstrates actions and activities that enable you to manage any act
           ✅ Implement method
           ✅ Add example
       getVerifyPasscodeActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
       getAddBiometricsActivityIntent()
           ⬜ Implement method
           ⬜ Add example
       getGenerateCpUserProfileActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
 
 ⬜ Action: Issue new Form Factor to an existing user with Biometrics mapped
 
       getUserIdentificationActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
       getBlacklistFormFactorActivityIntent()
-          ⬜ Implement method
+          ✅ Implement method
           ⬜ Add example
       getWriteProfileActivityIntent()
           ✅ Implement method
           ✅ Add example
       getGenerateCpUserProfileActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example
 
 ⬜ Action: Issue new Form Factor to an existing user with passcode authentication
 
@@ -142,11 +142,11 @@ This phase demonstrates actions and activities that enable you to manage any act
           ✅ Implement method
           ✅ Add example
       getBlacklistFormFactorActivityIntent()
-          ⬜ Implement method
+          ✅ Implement method
           ⬜ Add example
       getWriteProfileActivityIntent()
           ✅ Implement method
           ✅ Add example
       getGenerateCpUserProfileActivityIntent()
-          ⬜ Implement method
-          ⬜ Add example
+          ✅ Implement method
+          ✅ Add example

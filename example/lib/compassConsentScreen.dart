@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:compass_library_wrapper_plugin_example/color_utils.dart';
 import 'package:compass_library_wrapper_plugin_example/registerBasicUserScreen.dart';
@@ -55,53 +52,48 @@ class _CompassConsentScreenScreen extends State<CompassConsentScreenScreen>
     CommunityPassConsentScreenResult result;
     try {
       result = await _communityPassFlutterplugin.communityPassConsentWithPreBuiltUI(
-          reliantGUID, programGUID, null
-          // ConsentScreenConfig(
-          //     partnerPrivacyPolicyTitle: "Partner Privacy Policy.",
-          //     partnerPrivacyPolicyContent:
-          //         "The following is placeholder text that should be replaced with an actual partner's privacy policy text.\n\nTo create your digital profile, we need information about you, including your name, contact details and date of birth. This is to recognize you from other people and ensure we can uniquely identify you in the system. Mastercard is responsible for your profile data.\n\nWe store it securely in the United States. We only create the digital profile with your consent. You decide how your data is used. At any time, you can ask how we use your data or tell us you no longer want your digital profile to exist. We will delete your profile. If you have any such wish, please contact your agent or any nearby service provider.\n\nWhen you withdraw your consent to Community Pass, you have a 30-day period to change your mind and opt-in again. If you do not opt-in again within 30 days after having withdrawn your consent to Community Pass, we will automatically be deleting your profile.\n\nClick the close button to close the Partner Privacy Policy and go back to the Consent Page.",
-          //     partnerPrivacyPolicyExcerptTitle:
-          //         "Consent to Partner's Reliant Application",
-          //     partnerPrivacyPolicyExcerptContent:
-          //         "This is placeholder text that should be replaced with an actual partner's privacy policy excerpt text.",
-          //     acceptConsentButtonLabel: "Accept",
-          //     declineConsentButtonLabel: "Decline",
-          //     enableCommunityPassPrivacyPolicy: true,
-          //     enableBiometricNotice: true,
-          //     enablePartnerPrivacyPolicy: true,
-          //     beforeYouProceedText: "BEFORE YOU PROCEED",
-          //     beforeYouProceedFontSize: 18,
-          //     consentTitleFontSize: 16,
-          //     consentContentFontSize: 14,
-          //     switchLabelFontSize: 14,
-          //     buttonLabelFontSize: 14,
-          //     buttonBorderRadius: 25,
-          //     buttonHeight: 50,
-          //     darkThemeColorScheme: DarkThemeColorScheme(
-          //         primary: "#ff0000",
-          //         onPrimary: "#00ff00",
-          //         primaryContainer: "#000ff0",
-          //         onPrimaryContainer: "#0ff000",
-          //         background: "#00ff00",
-          //         onBackground: "#0000ff",
-          //         tertiaryContainer: "#0ff000"),
-          //     lightThemeColorScheme: LightThemeColorScheme(
-          //         primary: "#ff0000",
-          //         onPrimary: "#00ff00",
-          //         primaryContainer: "#000ff0",
-          //         onPrimaryContainer: "#0ff000",
-          //         background: "#00ff00",
-          //         onBackground: "#0000ff",
-          //         tertiaryContainer: "#0ff000"))
-          );
+          reliantGUID,
+          programGUID,
+          ConsentScreenConfig(
+              partnerPrivacyPolicyTitle: "Partner Privacy Policy.",
+              partnerPrivacyPolicyContent:
+                  "The following is placeholder text that should be replaced with an actual partner's privacy policy text.\n\nTo create your digital profile, we need information about you, including your name, contact details and date of birth. This is to recognize you from other people and ensure we can uniquely identify you in the system. Mastercard is responsible for your profile data.\n\nWe store it securely in the United States. We only create the digital profile with your consent. You decide how your data is used. At any time, you can ask how we use your data or tell us you no longer want your digital profile to exist. We will delete your profile. If you have any such wish, please contact your agent or any nearby service provider.\n\nWhen you withdraw your consent to Community Pass, you have a 30-day period to change your mind and opt-in again. If you do not opt-in again within 30 days after having withdrawn your consent to Community Pass, we will automatically be deleting your profile.\n\nClick the close button to close the Partner Privacy Policy and go back to the Consent Page.",
+              partnerPrivacyPolicyExcerptTitle:
+                  "Consent to Partner's Reliant Application",
+              partnerPrivacyPolicyExcerptContent:
+                  "This is placeholder text that should be replaced with an actual partner's privacy policy excerpt text.",
+              acceptConsentButtonLabel: "Accept",
+              declineConsentButtonLabel: "Decline",
+              enableCommunityPassPrivacyPolicy: true,
+              enableBiometricNotice: true,
+              enablePartnerPrivacyPolicy: true,
+              beforeYouProceedText: "BEFORE YOU PROCEED",
+              beforeYouProceedFontSize: 18,
+              consentTitleFontSize: 16,
+              consentContentFontSize: 14,
+              switchLabelFontSize: 14,
+              buttonLabelFontSize: 14,
+              buttonBorderRadius: 25,
+              buttonHeight: 50,
+              darkThemeColorScheme: DarkThemeColorScheme(
+                  primary: "#ff0000",
+                  onPrimary: "#00ff00",
+                  primaryContainer: "#000ff0",
+                  onPrimaryContainer: "#0ff000",
+                  background: "#00ff00",
+                  onBackground: "#0000ff",
+                  tertiaryContainer: "#0ff000"),
+              lightThemeColorScheme: LightThemeColorScheme(
+                  primary: "#ff0000",
+                  onPrimary: "#00ff00",
+                  primaryContainer: "#000ff0",
+                  onPrimaryContainer: "#0ff000",
+                  background: "#00ff00",
+                  onBackground: "#0000ff",
+                  tertiaryContainer: "#0ff000")));
 
       // check whether the state is mounted on the tree
       if (!mounted) return;
-
-      setState(() {
-        globalLoading = false;
-        globalError = "${result.status}";
-      });
 
       if (result.status == ConsentStatus.CONSENT_GRANTED) {
         setState(() {
@@ -158,7 +150,7 @@ class _CompassConsentScreenScreen extends State<CompassConsentScreenScreen>
             const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: Text(
-                  'This step calls uses the communityPassConsentWithPreBuiltUI API method. In this step, we check that a user has consented to capturing and storing their biometrics. If a user declines. You will register using passcode.',
+                  'This step calls uses the communityPassConsentWithPreBuiltUI API method. In this step, a pre-built consent UI is displayed to the user to capture 3 different types of consent. The user can decline or grant all consent.',
                   style: TextStyle(fontSize: 16),
                 )),
             Padding(

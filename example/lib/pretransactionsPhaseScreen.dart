@@ -1,4 +1,3 @@
-import 'package:compass_library_wrapper_plugin_example/compassConsentScreen.dart';
 import 'package:compass_library_wrapper_plugin_example/sharedSpaceScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:compass_library_wrapper_plugin_example/biometricConsentScreen.dart';
@@ -23,7 +22,7 @@ class PreTransactionScreen extends StatelessWidget {
             CardWidgetStateless(
               onClick: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const CompassConsentScreenScreen()));
+                    builder: (context) => const BiometricConsentScreen()));
               },
               cardLabel: 'Action',
               title: 'Enrol a New User',
