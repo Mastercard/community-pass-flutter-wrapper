@@ -1,8 +1,8 @@
+import 'package:compass_library_wrapper_plugin_example/sharedSpaceScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:compass_library_wrapper_plugin_example/biometricConsentScreen.dart';
 import 'package:compass_library_wrapper_plugin_example/color_utils.dart';
 import 'package:compass_library_wrapper_plugin_example/reusableCardWidget.dart';
-import 'package:compass_library_wrapper_plugin_example/utils.dart';
 
 class PreTransactionScreen extends StatelessWidget {
   const PreTransactionScreen({super.key});
@@ -34,7 +34,9 @@ class PreTransactionScreen extends StatelessWidget {
             ),
             CardWidgetStateless(
               onClick: () {
-                Utils.displayToast('Shared Space has not yet been implemented');
+                // Utils.displayToast('Shared Space has not yet been implemented');
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const SharedSpaceScreen()));
               },
               cardLabel: 'Action',
               title: 'Use the Shared Space',

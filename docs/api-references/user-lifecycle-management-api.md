@@ -55,6 +55,155 @@ In addition to the [general error codes](https://developer.mastercard.com/cp-ker
 | ERROR_CODE_PROGRAM_NOT_SUPPORTED              | 300      | Specified Program ID is not supported by CPK            |
 | ERROR_CODE_PROGRAM_DOES_NOT_SUPPORT_BIOMETRIC | 301      | Specified Program ID does not support biometric capture |
 
+### 1.1 communityPassConsentWithPreBuiltUI
+
+This step calls uses the communityPassConsentWithPreBuiltUI API method. In this step, a pre-built consent UI is displayed to the user to capture 3 different types of consent. The user can decline or grant all consent. This is a blocking call, therefore it is advised to perform on a non-UI thread.
+
+**Compatibility**
+| **Available as of CPK version #** | **Deprecated as of CPK version #** |
+|--------------------------------------------------|------------------------------------------------------------------|
+| + CPK 2.4.1 | + n/a |
+
+**Input Parameters**
+| **Parameter** | **Type** | **Description** |
+|---------------|----------|------------------------------------------------------|
+| consentRequest | SaveBiometricConsentParams | An object that contains a reliantGUID, programGUID and consumerConsentValue |
+
+**Response Parameters**
+| **Parameter** | **Type** | **Description** |
+|-----------------|-----------------|----------------------------------------------------------|
+| consentResponse | Promise<[CommunityPassConsentScreenResult]> | A promise that resolves to an object containing either a consentID and responseStatus fields or an error field. |
+
+**Type Aliases**
+
+```dart
+// Consent UI Params
+String reliantGUID,
+String programGUID,
+ConsentScreenConfig? consentScreenConfig
+
+class ConsentScreenConfig {
+  String? partnerPrivacyPolicyTitle;
+  String? partnerPrivacyPolicyContent;
+  String? partnerPrivacyPolicyExcerptTitle;
+  String? partnerPrivacyPolicyExcerptContent;
+  String? acceptConsentButtonLabel;
+  String? declineConsentButtonLabel;
+  bool? enableCommunityPassPrivacyPolicy;
+  bool? enableBiometricNotice;
+  bool? enablePartnerPrivacyPolicy;
+  String? beforeYouProceedText;
+  int? beforeYouProceedFontSize;
+  int? consentTitleFontSize;
+  int? consentContentFontSize;
+  int? switchLabelFontSize;
+  int? buttonLabelFontSize;
+  int? buttonBorderRadius;
+  int? buttonHeight;
+  DarkThemeColorScheme? darkThemeColorScheme;
+  LightThemeColorScheme? lightThemeColorScheme;
+
+  ConsentScreenConfig(
+      this.partnerPrivacyPolicyTitle,
+      this.partnerPrivacyPolicyContent,
+      this.partnerPrivacyPolicyExcerptTitle,
+      this.partnerPrivacyPolicyExcerptContent,
+      this.acceptConsentButtonLabel,
+      this.declineConsentButtonLabel,
+      this.enableCommunityPassPrivacyPolicy,
+      this.enableBiometricNotice,
+      this.enablePartnerPrivacyPolicy,
+      this.beforeYouProceedText,
+      this.beforeYouProceedFontSize,
+      this.consentTitleFontSize,
+      this.consentContentFontSize,
+      this.switchLabelFontSize,
+      this.buttonLabelFontSize,
+      this.buttonBorderRadius,
+      this.buttonHeight,
+      this.darkThemeColorScheme,
+      this.lightThemeColorScheme);
+}
+
+class DarkThemeColorScheme {
+  String primary;
+  String onPrimary;
+  String primaryContainer;
+  String onPrimaryContainer;
+  String background;
+  String onBackground;
+  String tertiaryContainer;
+
+  DarkThemeColorScheme(
+      this.primary,
+      this.onPrimary,
+      this.primaryContainer,
+      this.onPrimaryContainer,
+      this.background,
+      this.onBackground,
+      this.tertiaryContainer);
+}
+
+class LightThemeColorScheme {
+  String primary;
+  String onPrimary;
+  String primaryContainer;
+  String onPrimaryContainer;
+  String background;
+  String onBackground;
+  String tertiaryContainer;
+
+  LightThemeColorScheme(
+      this.primary,
+      this.onPrimary,
+      this.primaryContainer,
+      this.onPrimaryContainer,
+      this.background,
+      this.onBackground,
+      this.tertiaryContainer);
+}
+
+// Consent UI Result
+class CommunityPassConsentScreenResult {
+  final ConsentStatus status;
+  final ConsentResult? result;
+
+  CommunityPassConsentScreenResult(this.status, this.result);
+}
+
+enum ConsentStatus { CONSENT_GRANTED, CONSENT_DENIED }
+
+class ConsentResult {
+  final bool? communityPassPrivacyPolicyAccepted;
+  final bool? communityPassBiometricNoticeAccepted;
+  final bool? partnerPrivacyPolicyAccepted;
+  final AdditionalInfo? additionalInfo;
+
+  ConsentResult(
+      this.communityPassPrivacyPolicyAccepted,
+      this.communityPassBiometricNoticeAccepted,
+      this.partnerPrivacyPolicyAccepted,
+      this.additionalInfo);
+}
+
+class AdditionalInfo {
+  final String? consentID;
+  final String? responseStatus;
+
+  AdditionalInfo(this.consentID, this.responseStatus);
+}
+```
+
+**Error codes**
+
+In addition to the [general error codes](https://developer.mastercard.com/cp-kernel-integration-api/documentation/reference-pages/code-and-formats/), below are the error codes that CPK can send as part of the response:
+
+| **Error Code**                                | **Code** | **Description**                                         |
+| --------------------------------------------- | -------- | ------------------------------------------------------- |
+| ERROR_CODE_REGISTRATION_FAILED                | 600      | Instance registration failed                            |
+| ERROR_CODE_PROGRAM_NOT_SUPPORTED              | 300      | Specified Program ID is not supported by CPK            |
+| ERROR_CODE_PROGRAM_DOES_NOT_SUPPORT_BIOMETRIC | 301      | Specified Program ID does not support biometric capture |
+
 ### 1.2 getRegisterBasicUser
 
 This API is used to register an existing user with their card/CP Consumer Device present.
@@ -67,7 +216,7 @@ This API is used to register an existing user with their card/CP Consumer Device
 **Input Parameters**
 | **Parameter** | **Type** | **Description** |
 |---------------|----------|------------------------------------------------------|
-| registerBasicUserRequest | RegisterBasicUserParams | An object that contains a reliantGUID and programGUID |
+| registerBasicUserRequest | RegisterBasicUserParams | An object that contains a reliantGUID, programGUID and formFactor |
 
 **Response Parameters**
 | **Parameter** | **Type** | **Description** |
@@ -77,9 +226,17 @@ This API is used to register an existing user with their card/CP Consumer Device
 **Type Aliases**
 
 ```dart
+// FormFactor enum
+enum FormFactor {
+  CARD,
+  QR,
+  NONE,
+}
+
 // RegisterBasicUserParams
 String reliantGUID;
 String programGUID;
+String formFactor; // e.g FormFactor.CARD.name
 
 // RegisterBasicUserResult
 class RegisterBasicUserResult {

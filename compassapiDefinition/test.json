@@ -1,0 +1,37 @@
+{
+	"partnerPrivacyPolicyTitle": "string",
+	"partnerPrivacyPolicyContent": "string",
+	"partnerPrivacyPolicyExcerptTitle": "String",
+	"partnerPrivacyPolicyExcerptContent": "String",
+	"acceptConsentButtonLabel": "string",
+	"declineConsentButtonLabel": "string",
+	"enableCommunityPassPrivacyPolicy": true,
+	"enableBiometricNotice": true,
+	"enablePartnerPrivacyPolicy": true,
+	"beforeYouProceedText": "string",
+	"beforeYouProceedFontSize": 14,
+	"consentTitleFontSize": 14,
+	"consentContentFontSize": 14,
+	"switchLabelFontSize": 14,
+	"buttonLabelFontSize": 14,
+	"buttonBorderRadius": 14,
+	"buttonHeight": 14,
+	"darkThemeColorScheme": {
+		"primary": "string",
+		"onPrimary": "string",
+		"primaryContainer": "string",
+		"onPrimaryContainer": "string",
+		"background": "string",
+		"onBackground": "string",
+		"tertiaryContainer": "string"
+	},
+	"lightThemeColorScheme": {
+		"primary": "string",
+		"onPrimary": "string",
+		"primaryContainer": "string",
+		"onPrimaryContainer": "string",
+		"background": "string",
+		"onBackground": "string",
+		"tertiaryContainer": "string"
+	}
+}

@@ -2,7 +2,7 @@ group 'com.mastercard.compass.cp3.lib.flutter_wrapper'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.7.21'
+    ext.kotlin_version = '1.8.0'
     repositories {
         google()
         mavenCentral()
@@ -11,6 +11,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.1.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
     }
 }
 
@@ -23,6 +24,7 @@ allprojects {
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
 
 android {
     // issue: Inheritance from an interface with '@JvmDefault' members is only allowed with -Xjvm-default option
@@ -36,12 +38,12 @@ android {
     compileSdkVersion 32
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 
     sourceSets {
@@ -54,27 +56,46 @@ android {
     buildToolsVersion '30.0.3'
     buildFeatures {
         viewBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion "1.4.1"
     }
 }
 
 // Uncomment this for release builds
-rootProject.allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        flatDir {
-            dirs project(':compass_library_wrapper_plugin').file('libs')
-        }
-    }
-}
+//rootProject.allprojects {
+//    repositories {
+//        google()
+//        mavenCentral()
+//        flatDir {
+//            dirs project(':compass_library_wrapper_plugin').file('libs')
+//        }
+//    }
+//}
 
 dependencies {
     // Use local aar inside flutter plugin
-    implementation (name:"community-pass-library-v2.4.0", ext:'aar') // for release - assembleRelease //Android Studio and cli
+//     implementation (name: "community-pass-library-v2.6.1", ext:'aar') // for release - assembleRelease //Android Studio and cli
 
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    // Use this for Dev
+    implementation files("libs/community-pass-library-v2.6.1.aar")
+
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Compose
+    implementation "androidx.compose.material3:material3:1.1.2"
+    // Optional - Integration with activities
+
+    implementation("androidx.activity:activity-compose:1.6.1")
+    // Optional - Integration with ViewModels
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
+    // serialization
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
 
     //Navigation libs
     def nav_version = "2.5.3"

@@ -27,6 +27,7 @@ class _RegisterUserWithBiometricsScreenState
 
   final _communityPassFlutterplugin = CommunityPassApi();
 
+  List<String> listOfModalities = ["FACE", "LEFT_PALM", "RIGHT_PALM"];
   String globalError = '';
   bool globalLoading = false;
   bool isDialogOpen = false;
@@ -52,7 +53,11 @@ class _RegisterUserWithBiometricsScreenState
   }
 
   Future<void> getRegisterUserWithBiometrics(
-      String reliantGUID, String programGUID, String consentID) async {
+      String reliantGUID,
+      String programGUID,
+      String consentID,
+      List<String> modalities,
+      OperationMode operationMode) async {
     if (mounted) {
       setState(() {
         globalLoading = true;
@@ -63,7 +68,7 @@ class _RegisterUserWithBiometricsScreenState
 
     try {
       result = await _communityPassFlutterplugin.getRegisterUserWithBiometrics(
-          reliantGUID, programGUID, consentID);
+          reliantGUID, programGUID, consentID, modalities, operationMode);
 
       if (!mounted) return;
       setState(() {
@@ -82,7 +87,7 @@ class _RegisterUserWithBiometricsScreenState
         }
       });
     } on PlatformException catch (ex) {
-      globalError = ex.code;
+      globalError = "${ex.code}: ${ex.message}";
       globalLoading = false;
     }
   }
@@ -120,6 +125,48 @@ class _RegisterUserWithBiometricsScreenState
                     'This step calls the getRegisterUserWithBiometrics API method. The kernel will perform capture, validate biometric hashes created via a one to many search, create the Compass and return a R-ID as part of the process.',
                     style: TextStyle(fontSize: 16),
                   )),
+              CheckboxListTile(
+                title: const Text("Face"),
+                value: listOfModalities.contains("FACE"),
+                activeColor: mastercardOrange,
+                onChanged: (newValue) {
+                  if (newValue == true) {
+                    listOfModalities.add("FACE");
+                  } else {
+                    listOfModalities.remove("FACE");
+                  }
+                },
+                controlAffinity:
+                    ListTileControlAffinity.leading, //  <-- leading Checkbox
+              ),
+              CheckboxListTile(
+                title: const Text("Left Palm"),
+                value: listOfModalities.contains("LEFT_PALM"),
+                activeColor: mastercardOrange,
+                onChanged: (newValue) {
+                  if (newValue == true) {
+                    listOfModalities.add("LEFT_PALM");
+                  } else {
+                    listOfModalities.remove("LEFT_PALM");
+                  }
+                },
+                controlAffinity:
+                    ListTileControlAffinity.leading, //  <-- leading Checkbox
+              ),
+              CheckboxListTile(
+                title: const Text("Right Palm"),
+                value: listOfModalities.contains("RIGHT_PALM"),
+                activeColor: mastercardOrange,
+                onChanged: (newValue) {
+                  if (newValue == true) {
+                    listOfModalities.add("RIGHT_PALM");
+                  } else {
+                    listOfModalities.remove("RIGHT_PALM");
+                  }
+                },
+                controlAffinity:
+                    ListTileControlAffinity.leading, //  <-- leading Checkbox
+              ),
               Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -144,7 +191,11 @@ class _RegisterUserWithBiometricsScreenState
                               ? null
                               : (() {
                                   getRegisterUserWithBiometrics(
-                                      _reliantAppGuid, _programGuid, value);
+                                      _reliantAppGuid,
+                                      _programGuid,
+                                      value,
+                                      listOfModalities,
+                                      OperationMode.BEST_AVAILABLE);
                                 }),
                           child: const Text('Start registration')))),
             ]));

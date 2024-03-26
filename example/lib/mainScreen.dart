@@ -1,3 +1,4 @@
+import 'package:compass_library_wrapper_plugin_example/transactionsPhaseScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:compass_library_wrapper_plugin_example/color_utils.dart';
 import 'package:compass_library_wrapper_plugin_example/pretransactionsPhaseScreen.dart';
@@ -47,8 +48,8 @@ class MainScreen extends StatelessWidget {
                   size: 30,
                 ),
                 onClick: () {
-                  Utils.displayToast(
-                      'Transactions phase has not yet been implemented');
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const TransactionScreen()));
                 },
               ),
               CardWidgetStateless(

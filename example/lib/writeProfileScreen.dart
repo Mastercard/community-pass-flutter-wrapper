@@ -28,7 +28,9 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
 
   String globalError = '';
   bool globalLoading = false;
-  bool overwriteCardValue = false;
+  int? overwriteCardValue;
+  int selectedOption = 1;
+  String? registrationType;
 
   late AnimationController controller;
 
@@ -41,6 +43,7 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
         setState(() {});
       });
     controller.repeat(reverse: true);
+    receivedParams['registrationType']!;
     super.initState();
   }
 
@@ -48,6 +51,54 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  Future<void> getGenerateCpUserProfile(String reliantGUID, String programGUID,
+      String rID, String? passcode) async {
+    if (mounted) {
+      setState(() {
+        globalLoading = true;
+      });
+    }
+    GenerateCpUserProfileResult result;
+
+    try {
+      result = await _communityPassFlutterplugin.getGenerateCpUserProfile(
+          reliantGUID, programGUID, rID, passcode);
+
+      if (!mounted) return;
+      setState(() {
+        globalLoading = false;
+        globalLoading = false;
+        if (receivedParams['registrationType'] == "BIOMETRIC_USER") {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => WriteSuccessfulScreen(navigationParams: {
+              "rID": receivedParams['rID']!,
+              "formFactor": "QR",
+              "registrationType": 'BIOMETRIC_USER',
+              "consumerDeviceNumber": result.consumerDeviceNumber,
+              "token": result.token,
+            }),
+          ));
+        } else {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => WritePasscodeScreen(navigationParams: {
+              "rID": receivedParams['rID']!,
+              "registrationType": 'BASIC_USER',
+              "formFactor": "QR",
+              "consumerDeviceNumber": result.consumerDeviceNumber,
+              "token": result.token,
+            }),
+          ));
+        }
+      });
+    } on PlatformException catch (ex) {
+      setState(() {
+        if (!mounted) return;
+        globalError = "${ex.code}: ${ex.message}";
+        globalLoading = false;
+      });
+    }
   }
 
   Future<void> getWriteProfile(String reliantGUID, String programGUID,
@@ -65,12 +116,15 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
 
       if (!mounted) return;
       setState(() {
+        overwriteCardValue = null;
         globalLoading = false;
         if (receivedParams['registrationType'] == "BIOMETRIC_USER") {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => WriteSuccessfulScreen(navigationParams: {
               "rID": receivedParams['rID']!,
               "consumerDeviceNumber": result.consumerDeviceNumber,
+              "registrationType": 'BIOMETRIC_USER',
+              "formFactor": "CARD",
             }),
           ));
         } else {
@@ -79,6 +133,7 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
               "rID": receivedParams['rID']!,
               "consumerDeviceNumber": result.consumerDeviceNumber,
               "registrationType": 'BASIC_USER',
+              "formFactor": "CARD"
             }),
           ));
         }
@@ -86,7 +141,8 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
     } on PlatformException catch (ex) {
       setState(() {
         if (!mounted) return;
-        globalError = ex.code;
+        overwriteCardValue = null;
+        globalError = "${ex.code}: ${ex.message}";
         globalLoading = false;
       });
     }
@@ -96,7 +152,7 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Write Profile on Card'),
+          title: const Text('Write Profile'),
           backgroundColor: mastercardOrange,
         ),
         body: Column(
@@ -116,7 +172,7 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
               const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Text(
-                    'Part 3: Write Card',
+                    'Part 3: Write Profile',
                     style: TextStyle(fontSize: 20),
                   )),
               const Padding(
@@ -125,6 +181,35 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
                     'This step calls the writeProfile API method. The kernel will perform a write operation on the card and return a rId.',
                     style: TextStyle(fontSize: 16),
                   )),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  ListTile(
+                    title: const Text('Write Profile on a Card'),
+                    leading: Radio(
+                      value: 1,
+                      groupValue: selectedOption,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedOption = value!;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text('Write Profile to a QR Code'),
+                    leading: Radio(
+                      value: 2,
+                      groupValue: selectedOption,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedOption = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
               Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -136,24 +221,8 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
                           semanticsLabel: 'Linear progress indicator',
                         )
                       : null),
-              Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                  child: CheckboxListTile(
-                    title: const Text("Overwrite card"),
-                    value: overwriteCardValue,
-                    activeColor: mastercardOrange,
-                    onChanged: (newValue) {
-                      setState(() {
-                        overwriteCardValue = newValue!;
-                      });
-                    },
-                    controlAffinity: ListTileControlAffinity
-                        .leading, //  <-- leading Checkbox
-                  )),
               SizedBox(
                   width: double.infinity,
-                  // height: 100,
                   child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 20),
@@ -164,13 +233,75 @@ class _WriteProfileScreenState extends State<WriteProfileScreen>
                           onPressed: globalLoading
                               ? null
                               : (() {
-                                  getWriteProfile(
-                                      _reliantAppGuid,
-                                      _programGuid,
-                                      receivedParams['rID']!,
-                                      overwriteCardValue);
+                                  if (selectedOption == 1) {
+                                    showCardAlert(context);
+                                  } else {
+                                    //
+                                    // Navigator.of(context)
+                                    //     .push(MaterialPageRoute(
+                                    //   builder: (context) =>
+                                    //       WriteSuccessfulScreen(
+                                    //           navigationParams: {
+                                    //         "rID": receivedParams['rID']!,
+                                    //         "consumerDeviceNumber": "abc",
+                                    //         "formFactor": "QR",
+                                    //       }),
+                                    // ));
+                                    //
+                                    getGenerateCpUserProfile(
+                                        _reliantAppGuid,
+                                        _programGuid,
+                                        receivedParams['rID']!,
+                                        receivedParams['passcode']);
+                                  }
                                 }),
-                          child: const Text('Write Profile on Card')))),
+                          child: selectedOption == 1
+                              ? const Text('Write Profile on a Card')
+                              : const Text('Write Profile to a QR Code')))),
             ]));
+  }
+
+  void showCardAlert(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text('Overwrite Card'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  ListTile(
+                    title: const Text('Yes'),
+                    leading: Radio(
+                      value: 1,
+                      groupValue: overwriteCardValue,
+                      onChanged: (value) {
+                        setState(() {
+                          Navigator.pop(context);
+                          overwriteCardValue = value!;
+                          getWriteProfile(_reliantAppGuid, _programGuid,
+                              receivedParams['rID']!, true);
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text('No'),
+                    leading: Radio(
+                      value: 2,
+                      groupValue: overwriteCardValue,
+                      onChanged: (value) {
+                        setState(() {
+                          Navigator.pop(context);
+                          overwriteCardValue = value!;
+                          getWriteProfile(_reliantAppGuid, _programGuid,
+                              receivedParams['rID']!, false);
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ));
   }
 }

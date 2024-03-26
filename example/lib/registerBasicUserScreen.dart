@@ -1,3 +1,4 @@
+import 'package:compass_library_wrapper_plugin_example/writePasscodeScreen.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -54,13 +55,13 @@ class _RegisterBasicUserScreenState extends State<RegisterBasicUserScreen>
 
     try {
       result = await _communityPassFlutterplugin.getRegisterBasicUser(
-          reliantGUID, programGUID);
+          reliantGUID, programGUID, '');
 
       if (!mounted) return;
       setState(() {
         globalLoading = false;
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => WriteProfileScreen(navigationParams: {
+            builder: (context) => WritePasscodeScreen(navigationParams: {
                   "rID": result.rID,
                   "registrationType": 'BASIC_USER',
                 })));
@@ -68,7 +69,7 @@ class _RegisterBasicUserScreenState extends State<RegisterBasicUserScreen>
     } on PlatformException catch (ex) {
       if (!mounted) return;
       setState(() {
-        globalError = ex.code;
+        globalError = "${ex.code}: ${ex.message}";
         globalLoading = false;
       });
     }
