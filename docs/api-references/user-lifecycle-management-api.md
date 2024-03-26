@@ -226,9 +226,17 @@ This API is used to register an existing user with their card/CP Consumer Device
 **Type Aliases**
 
 ```dart
+// FormFactor enum
+enum FormFactor {
+  CARD,
+  QR,
+  NONE,
+}
+
 // RegisterBasicUserParams
 String reliantGUID;
 String programGUID;
+String formFactor; // e.g FormFactor.CARD.name
 
 // RegisterBasicUserResult
 class RegisterBasicUserResult {
