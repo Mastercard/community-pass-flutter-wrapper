@@ -216,7 +216,7 @@ This API is used to register an existing user with their card/CP Consumer Device
 **Input Parameters**
 | **Parameter** | **Type** | **Description** |
 |---------------|----------|------------------------------------------------------|
-| registerBasicUserRequest | RegisterBasicUserParams | An object that contains a reliantGUID and programGUID |
+| registerBasicUserRequest | RegisterBasicUserParams | An object that contains a reliantGUID, programGUID and formFactor |
 
 **Response Parameters**
 | **Parameter** | **Type** | **Description** |
