@@ -1,5 +1,11 @@
 # Mastercard's Community Pass Platform - Flutter
 
+>## Notice of Deprecation
+>
+>Please be advised that the current library has been deprecated. Moving forward, we recommend using the Bridge Reliant Application for all future developments and integrations. This alternative offers enhanced features and improved performance, ensuring a more efficient and secure experience.
+>
+>Thank you for your understanding and cooperation.
+
 [![](https://developer.mastercard.com/_/_/src/global/assets/svg/mcdev-logo-light.svg#gh-dark-mode-only)](https://developer.mastercard.com/)
 
 [![](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
