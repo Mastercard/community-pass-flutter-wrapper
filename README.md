@@ -1,4 +1,4 @@
-# Mastercard's Community Pass Platform - Flutter
+# Deprecated - Mastercard's Community Pass Platform - Flutter
 
 >## Notice of Deprecation
 >
